@@ -1,3 +1,4 @@
+import { isAppleTV } from '@/constants/TVTheme';
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Pause, Play, SkipForward, List, Tv, ArrowDownToDot, ArrowUpFromDot, Gauge } from "lucide-react-native";
@@ -87,36 +88,36 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({ showControls, se
         </ThemedText>
 
         <View style={styles.bottomControls}>
-          <MediaButton onPress={setIntroEndTime} timeLabel={introEndTime ? formatTime(introEndTime) : undefined}>
-            <ArrowDownToDot color="white" size={24} />
+          <MediaButton accessibilityLabel="设置片头结束位置" onPress={setIntroEndTime} timeLabel={introEndTime ? formatTime(introEndTime) : undefined}>
+            <ArrowDownToDot color="white" size={isAppleTV ? 32 : 24} />
           </MediaButton>
 
-          <MediaButton onPress={togglePlayPause} hasTVPreferredFocus={showControls}>
+          <MediaButton accessibilityLabel={status?.isLoaded && status.isPlaying ? "暂停" : "播放"} onPress={togglePlayPause} hasTVPreferredFocus={showControls}>
             {status?.isLoaded && status.isPlaying ? (
-              <Pause color="white" size={24} />
+              <Pause color="white" size={isAppleTV ? 32 : 24} />
             ) : (
-              <Play color="white" size={24} />
+              <Play color="white" size={isAppleTV ? 32 : 24} />
             )}
           </MediaButton>
 
-          <MediaButton onPress={onPlayNextEpisode} disabled={!hasNextEpisode}>
-            <SkipForward color={hasNextEpisode ? "white" : "#666"} size={24} />
+          <MediaButton accessibilityLabel="下一集" onPress={onPlayNextEpisode} disabled={!hasNextEpisode}>
+            <SkipForward color={hasNextEpisode ? "white" : "#666"} size={isAppleTV ? 32 : 24} />
           </MediaButton>
 
-          <MediaButton onPress={setOutroStartTime} timeLabel={outroStartTime ? formatTime(outroStartTime) : undefined}>
-            <ArrowUpFromDot color="white" size={24} />
+          <MediaButton accessibilityLabel="设置片尾开始位置" onPress={setOutroStartTime} timeLabel={outroStartTime ? formatTime(outroStartTime) : undefined}>
+            <ArrowUpFromDot color="white" size={isAppleTV ? 32 : 24} />
           </MediaButton>
 
-          <MediaButton onPress={() => setShowEpisodeModal(true)}>
-            <List color="white" size={24} />
+          <MediaButton accessibilityLabel="选集" onPress={() => setShowEpisodeModal(true)}>
+            <List color="white" size={isAppleTV ? 32 : 24} />
           </MediaButton>
 
-          <MediaButton onPress={() => setShowSpeedModal(true)} timeLabel={playbackRate !== 1.0 ? `${playbackRate}x` : undefined}>
-            <Gauge color="white" size={24} />
+          <MediaButton accessibilityLabel="播放速度" onPress={() => setShowSpeedModal(true)} timeLabel={playbackRate !== 1.0 ? `${playbackRate}x` : undefined}>
+            <Gauge color="white" size={isAppleTV ? 32 : 24} />
           </MediaButton>
 
-          <MediaButton onPress={() => setShowSourceModal(true)}>
-            <Tv color="white" size={24} />
+          <MediaButton accessibilityLabel="切换播放来源" onPress={() => setShowSourceModal(true)}>
+            <Tv color="white" size={isAppleTV ? 32 : 24} />
           </MediaButton>
         </View>
       </View>
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   },
   controlTitle: {
     color: "white",
-    fontSize: 16,
+    fontSize: isAppleTV ? 29 : 16,
     fontWeight: "bold",
     flex: 1,
     textAlign: "center",
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   },
   resolutionText: {
     color: "white",
-    fontSize: 16,
+    fontSize: isAppleTV ? 29 : 16,
     fontWeight: "bold",
     backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: 8,
