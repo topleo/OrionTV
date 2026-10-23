@@ -1,3 +1,4 @@
+import { NativeTVMenu } from '@/components/navigation/NativeTVControls';
 import { TVFocusScope, TVNavigationFocus } from '@/components/TVFocusScope';
 import { TVNavigation } from '@/components/navigation/TVNavigation';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
@@ -23,7 +24,7 @@ import { Colors } from "@/constants/Colors";
 const LOAD_MORE_THRESHOLD = 200;
 
 function HomeScreen() {
-  const { navigationTarget, markContentFocus } = React.useContext(TVNavigationFocus);
+  const { navigationTarget, markContentFocus, registerContentEntry } = React.useContext(TVNavigationFocus);
   const router = useRouter();
   const colorScheme = "dark";
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -292,6 +293,23 @@ function HomeScreen() {
       {/* 顶部导航 */}
       {renderHeader()}
 
+      {isAppleTV ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: TVTheme.gutter, gap: 28, paddingVertical: 16 }}>
+          <ThemedText style={{ flex: 1, fontSize: 36, lineHeight: 46, fontWeight: '700' }} accessibilityRole="header">
+            {selectedCategory?.title || '现在观看'}
+          </ThemedText>
+          <NativeTVMenu ref={registerContentEntry} style={{ width: 260, height: 64 }}
+            title={selectedCategory?.title || '分类'} options={categories.map(category => category.title)}
+            selectedIndex={categories.findIndex(category => category.title === selectedCategory?.title)}
+            onControlFocus={() => markContentFocus(false)}
+            onSelect={event => { const category = categories[event.nativeEvent.index]; if (category) handleCategorySelect(category); }} />
+          {!!selectedCategory?.tags?.length && <NativeTVMenu style={{ width: 260, height: 64 }}
+            title={selectedTag || selectedCategory.tag || '筛选'} options={selectedCategory.tags}
+            selectedIndex={selectedCategory.tags.indexOf(selectedTag || selectedCategory.tag || '')}
+            onControlFocus={() => markContentFocus(false)}
+            onSelect={event => { const tag = selectedCategory.tags?.[event.nativeEvent.index]; if (tag) handleTagSelect(tag); }} />}
+        </View>
+      ) : <>
       {/* 分类选择器 */}
       <View style={dynamicStyles.categoryContainer}>
         <FlatList
@@ -331,9 +349,7 @@ function HomeScreen() {
         </View>
       )}
 
-      {isAppleTV && <View style={{ paddingHorizontal: TVTheme.gutter, paddingTop: 12, paddingBottom: 12 }}>
-        <ThemedText style={{ fontSize: 36, lineHeight: 46, fontWeight: '700' }} accessibilityRole="header">{selectedCategory?.title || '现在观看'}</ThemedText>
-      </View>}
+      </>}
       {/* 内容网格 */}
       {shouldShowApiConfig ? (
         <View style={commonStyles.center}>

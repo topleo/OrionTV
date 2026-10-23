@@ -5,19 +5,24 @@ import { isAppleTV } from '@/constants/TVTheme';
 
 type NavigationFocus = {
   navigationTarget?: number;
+  contentEntryTarget?: number;
   registerNavigation: (view: View | null) => void;
+  registerContentEntry: (view: View | null) => void;
   markContentFocus: (firstRow: boolean) => void;
   markNavigationFocus: () => void;
 };
 // Each screen owns its destination; hidden stack screens cannot replace it.
 export const TVNavigationFocus = createContext<NavigationFocus>({
-  registerNavigation: () => {}, markContentFocus: () => {}, markNavigationFocus: () => {},
+  registerNavigation: () => {}, registerContentEntry: () => {}, markContentFocus: () => {}, markNavigationFocus: () => {},
 });
 export const TVGridFirstRow = createContext(false);
 
 export function TVFocusScope({ children }: { children: React.ReactNode }) {
   const [navigationTarget, setNavigationTarget] = useState<number>();
   const navigation = useRef<View | null>(null);
+  const contentEntry = useRef<View | null>(null);
+  const [contentEntryTarget, setContentEntryTarget] = useState<number>();
+  const registerContentEntry = useCallback((view: View | null) => { contentEntry.current = view; setContentEntryTarget(view ? findNodeHandle(view) ?? undefined : undefined); }, []);
   const region = useRef<'navigation' | 'firstRow' | 'content'>('navigation');
   const pendingFocus = useRef<ReturnType<typeof setTimeout>>();
   const isFocused = useIsFocused();
@@ -37,7 +42,11 @@ export function TVFocusScope({ children }: { children: React.ReactNode }) {
   }, []);
   useTVEventHandler(event => {
     if (isAppleTV && isFocused && ['up', 'longUp', 'swipeUp'].includes(event.eventType) && region.current === 'firstRow') {
-      focusNavigation();
+      if (contentEntry.current) {
+        region.current = 'content';
+        clearTimeout(pendingFocus.current);
+        pendingFocus.current = setTimeout(() => contentEntry.current?.requestTVFocus(), 20);
+      } else focusNavigation();
     }
   });
   useEffect(() => {
@@ -47,7 +56,7 @@ export function TVFocusScope({ children }: { children: React.ReactNode }) {
     return () => subscription.remove();
   }, [focusNavigation, isFocused]);
   useEffect(() => () => clearTimeout(pendingFocus.current), []);
-  const value = useMemo(() => ({ navigationTarget, registerNavigation, markContentFocus, markNavigationFocus }),
-    [navigationTarget, registerNavigation, markContentFocus, markNavigationFocus]);
+  const value = useMemo(() => ({ navigationTarget, contentEntryTarget, registerNavigation, registerContentEntry, markContentFocus, markNavigationFocus }),
+    [navigationTarget, contentEntryTarget, registerNavigation, registerContentEntry, markContentFocus, markNavigationFocus]);
   return <TVNavigationFocus.Provider value={value}>{children}</TVNavigationFocus.Provider>;
 }

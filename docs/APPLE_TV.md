@@ -47,3 +47,11 @@ git merge upstream/master
 真机还应检查遥控器焦点、搜索输入、收藏、继续观看、播放和系统“减少动态效果”。代码检查无法替代电视上的视觉和交互检查。
 
 在 Apple TV 4K 真机上已确认安装、播放和首页海报区向上返回顶部导航。焦点修复同时保留返回键恢复导航的路径，并通过遥控器事件行为检查。
+
+## 原生导航与筛选
+
+tvOS 的主导航使用 UIKit `UITabBar`，保留现在观看、资料库、搜索、直播和设置。首页的分类与标签属于当前页面的筛选，放在同一行的两个 UIKit `UIButton` 菜单中；tvOS 17 及以上使用 `UIMenu`，较早系统使用系统 action sheet。选中标记、菜单关闭和焦点外观由 UIKit 管理。这里并未把 React Native 内容页重写成 SwiftUI，也未伪装为 `UITabBarController`。
+
+从第一排海报向上先回到分类菜单；没有筛选区的页面回主导航。返回键从内容区回到主导航，导航本身的返回事件继续交给路由。设置页导航固定在滚动区外。原生模块源码通过 Expo 插件在每次 prebuild 更新，避免生成目录中的修改丢失。
+
+依据：[Apple Tab bars（tvOS）](https://developer.apple.com/design/human-interface-guidelines/tab-bars)、[Designing for tvOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-tvos) 和 [Pop-up buttons](https://developer.apple.com/design/human-interface-guidelines/pop-up-buttons)。原生化主要解决三排横向导航职责重叠，以及手绘控件焦点状态与系统不一致的问题。

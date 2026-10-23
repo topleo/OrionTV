@@ -1,3 +1,4 @@
+import { TVFocusScope } from '@/components/TVFocusScope';
 import { TVNavigation } from '@/components/navigation/TVNavigation';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useEffect, useRef } from "react";
@@ -36,7 +37,7 @@ function isSectionItem(
   return !!item;
 }
 
-export default function SettingsScreen() {
+function SettingsScreen() {
   const { loadSettings, saveSettings, setApiBaseUrl, setM3uUrl } = useSettingsStore();
   const { lastMessage, targetPage, clearMessage } = useRemoteControlStore();
   const { isLoggedIn, logout, showLoginModal } = useAuthStore();
@@ -245,7 +246,6 @@ export default function SettingsScreen() {
       style={{ flex: 1, backgroundColor }}
     >
 
-      {isAppleTV && <TVNavigation />}
       <ThemedView style={[commonStyles.container, dynamicStyles.container]}>
         {deviceType === "tv" && (
           <View style={dynamicStyles.header}>
@@ -300,7 +300,7 @@ export default function SettingsScreen() {
 
   // 根据设备类型决定是否包装在响应式导航中
   if (deviceType === "tv") {
-    return renderSettingsContent();
+    return isAppleTV ? <View style={{ flex: 1 }}><TVNavigation />{renderSettingsContent()}</View> : renderSettingsContent();
   }
 
   return (
@@ -362,3 +362,5 @@ const createResponsiveStyles = (deviceType: string, spacing: number, insets: any
     },
   });
 };
+
+export default function SettingsWithTVFocus() { return <TVFocusScope><SettingsScreen /></TVFocusScope>; }

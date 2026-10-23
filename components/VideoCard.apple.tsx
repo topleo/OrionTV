@@ -22,7 +22,7 @@ const AppleVideoCard = forwardRef<View, Props>((props, ref) => {
   const router = useRouter();
   const layout = useResponsiveLayout();
   const gridWidth = useContext(TVGridCardWidth);
-  const { navigationTarget, markContentFocus } = useContext(TVNavigationFocus);
+  const { navigationTarget, contentEntryTarget, markContentFocus } = useContext(TVNavigationFocus);
   const firstRow = useContext(TVGridFirstRow);
   const cardWidth = gridWidth || layout.cardWidth;
   const cardHeight = cardWidth * 1.5;
@@ -49,7 +49,7 @@ const AppleVideoCard = forwardRef<View, Props>((props, ref) => {
     ]);
   };
   return (
-    <Pressable ref={ref} nextFocusUp={firstRow ? navigationTarget : undefined} onPress={open} onLongPress={removeRecord} delayLongPress={1000}
+    <Pressable ref={ref} nextFocusUp={firstRow ? contentEntryTarget ?? navigationTarget : undefined} onPress={open} onLongPress={removeRecord} delayLongPress={1000}
       onFocus={() => { markContentFocus(firstRow); setFocused(true); onFocus?.(); }} onBlur={() => setFocused(false)}
       accessibilityRole="button" accessibilityLabel={`${title}${year ? `，${year}` : ''}${continuing ? '，继续观看' : ''}`}
       accessibilityHint={progress !== undefined ? '按下播放，长按可移除观看记录' : '查看影片详情和播放来源'}
