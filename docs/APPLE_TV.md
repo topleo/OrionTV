@@ -45,3 +45,5 @@ git merge upstream/master
 已验证干净 prebuild 和再次 prebuild 都只生成一份 SceneDelegate；应用代码 TypeScript 检查通过。上游 `utils/__tests__/DeviceUtils.test.ts` 的旧尺寸 mock 缺少 `scale` / `fontScale`，完整 `tsc --noEmit` 仍报告这些既有错误。
 
 真机还应检查遥控器焦点、搜索输入、收藏、继续观看、播放和系统“减少动态效果”。代码检查无法替代电视上的视觉和交互检查。
+
+在 Apple TV 4K 真机上已确认安装、播放和首页海报区向上返回顶部导航。焦点修复同时保留返回键恢复导航的路径，并通过遥控器事件行为检查。
