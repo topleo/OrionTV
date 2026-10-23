@@ -1,3 +1,5 @@
+import { TVNavigation } from '@/components/navigation/TVNavigation';
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
@@ -46,6 +48,7 @@ export default function FavoritesScreen() {
 
   const renderFavoritesContent = () => (
     <>
+      {isAppleTV && <TVNavigation />}
       {deviceType === 'tv' && (
         <View style={dynamicStyles.headerContainer}>
           <ThemedText style={dynamicStyles.headerTitle}>我的收藏</ThemedText>
@@ -56,7 +59,7 @@ export default function FavoritesScreen() {
         renderItem={renderItem}
         loading={loading}
         error={error}
-        emptyMessage="暂无收藏"
+        emptyMessage="收藏喜欢的影片后，会显示在这里"
       />
     </>
   );
@@ -88,17 +91,18 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: isTV ? spacing * 2 : 0,
+      paddingTop: isAppleTV ? 12 : isTV ? spacing * 2 : 0,
+      paddingHorizontal: isAppleTV ? 0 : spacing,
     },
     headerContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingHorizontal: spacing * 1.5,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : spacing * 1.5,
       marginBottom: spacing / 2,
     },
     headerTitle: {
-      fontSize: isMobile ? 24 : isTablet ? 28 : 32,
+      fontSize: isAppleTV ? 42 : isMobile ? 24 : isTablet ? 28 : 32,
       fontWeight: "bold",
       paddingTop: spacing,
       color: 'white',

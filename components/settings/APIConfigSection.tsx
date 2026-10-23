@@ -1,3 +1,4 @@
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useRef, useImperativeHandle, forwardRef } from "react";
 import { View, TextInput, StyleSheet, Animated, Platform } from "react-native";
 import { useTVEventHandler } from "react-native";
@@ -135,29 +136,29 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: isAppleTV ? 26 : 16,
     fontWeight: "bold",
     marginRight: 12,
   },
   subtitle: {
-    fontSize: 12,
-    color: "#888",
+    fontSize: isAppleTV ? 21 : 12,
+    color: isAppleTV ? TVTheme.secondaryText : "#888",
     fontStyle: "italic",
   },
   inputContainer: {
     marginBottom: 12,
   },
   label: {
-    fontSize: 16,
+    fontSize: isAppleTV ? 26 : 16,
     marginBottom: 8,
     color: "#ccc",
   },
   input: {
-    height: 50,
+    height: isAppleTV ? 68 : 50,
     borderWidth: 2,
     borderRadius: 8,
     paddingHorizontal: 15,
-    fontSize: 16,
+    fontSize: isAppleTV ? 26 : 16,
     backgroundColor: "#3a3a3c",
     color: "white",
     borderColor: "transparent",

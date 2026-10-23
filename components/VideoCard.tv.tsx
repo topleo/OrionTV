@@ -1,3 +1,5 @@
+import AppleVideoCard from './VideoCard.apple';
+import { isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity, Alert, Animated, Platform } from "react-native";
 import { useRouter } from "expo-router";
@@ -220,7 +222,9 @@ const VideoCard = forwardRef<View, VideoCardProps>(
 
 VideoCard.displayName = "VideoCard";
 
-export default VideoCard;
+const TVVideoCard = forwardRef<View, VideoCardProps>((props, ref) => isAppleTV ? <AppleVideoCard {...props} ref={ref} /> : <VideoCard {...props} ref={ref} />);
+TVVideoCard.displayName = 'TVVideoCard';
+export default TVVideoCard;
 
 const CARD_WIDTH = 160;
 const CARD_HEIGHT = 240;

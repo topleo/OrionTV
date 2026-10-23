@@ -1,3 +1,5 @@
+import { TVNavigation } from '@/components/navigation/TVNavigation';
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useRef, useEffect } from "react";
 import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
@@ -135,11 +137,11 @@ export default function SearchScreen() {
             returnKeyType="search"
           />
         </TouchableOpacity>
-        <StyledButton style={dynamicStyles.searchButton} onPress={onSearchPress}>
+        <StyledButton accessibilityLabel="搜索影片" style={dynamicStyles.searchButton} onPress={onSearchPress}>
           <Search size={deviceType === 'mobile' ? 20 : 24} color="white" />
         </StyledButton>
         {deviceType !== 'mobile' && (
-          <StyledButton style={dynamicStyles.qrButton} onPress={handleQrPress}>
+          <StyledButton accessibilityLabel="用手机输入搜索词" style={dynamicStyles.qrButton} onPress={handleQrPress}>
             <QrCode size={deviceType === 'tv' ? 24 : 20} color="white" />
           </StyledButton>
         )}
@@ -166,6 +168,7 @@ export default function SearchScreen() {
 
   const content = (
     <ThemedView style={[commonStyles.container, dynamicStyles.container]}>
+      {isAppleTV && <><TVNavigation /><ThemedText style={{ paddingHorizontal: TVTheme.gutter, paddingBottom: 24, fontSize: 42, lineHeight: 52, fontWeight: '700' }} accessibilityRole="header">搜索</ThemedText></>}
       {renderSearchContent()}
     </ThemedView>
   );
@@ -190,18 +193,19 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: deviceType === 'tv' ? 50 : 0,
+      paddingTop: isAppleTV ? 12 : deviceType === 'tv' ? 50 : 0,
+      paddingHorizontal: isAppleTV ? 0 : spacing,
     },
     searchContainer: {
       flexDirection: "row",
-      paddingHorizontal: spacing,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : spacing,
       marginBottom: spacing,
       alignItems: "center",
       paddingTop: isMobile ? spacing / 2 : 0,
     },
     inputContainer: {
       flex: 1,
-      height: isMobile ? minTouchTarget : 50,
+      height: isAppleTV ? 68 : isMobile ? minTouchTarget : 50,
       backgroundColor: "#2c2c2e",
       borderRadius: isMobile ? 8 : 8,
       marginRight: spacing / 2,
@@ -213,11 +217,11 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
       flex: 1,
       paddingHorizontal: spacing,
       color: "white",
-      fontSize: isMobile ? 16 : 18,
+      fontSize: isAppleTV ? 29 : isMobile ? 16 : 18,
     },
     searchButton: {
       width: isMobile ? minTouchTarget : 50,
-      height: isMobile ? minTouchTarget : 50,
+      height: isAppleTV ? 68 : isMobile ? minTouchTarget : 50,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: isMobile ? 8 : 8,
@@ -225,14 +229,14 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
     qrButton: {
       width: isMobile ? minTouchTarget : 50,
-      height: isMobile ? minTouchTarget : 50,
+      height: isAppleTV ? 68 : isMobile ? minTouchTarget : 50,
       justifyContent: "center",
       alignItems: "center",
       borderRadius: isMobile ? 8 : 8,
     },
     errorText: {
-      color: "red",
-      fontSize: isMobile ? 14 : 16,
+      color: TVTheme.danger,
+      fontSize: isAppleTV ? 24 : isMobile ? 14 : 16,
       textAlign: "center",
     },
   });
