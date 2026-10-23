@@ -23,7 +23,7 @@ import { Colors } from "@/constants/Colors";
 const LOAD_MORE_THRESHOLD = 200;
 
 function HomeScreen() {
-  const { navigationTarget } = React.useContext(TVNavigationFocus);
+  const { navigationTarget, markContentFocus } = React.useContext(TVNavigationFocus);
   const router = useRouter();
   const colorScheme = "dark";
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -157,7 +157,7 @@ function HomeScreen() {
   const renderCategory = ({ item }: { item: Category }) => {
     const isSelected = selectedCategory?.title === item.title;
     return (
-      <StyledButton nextFocusUp={navigationTarget}
+      <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
         text={item.title}
         onPress={() => handleCategorySelect(item)}
         isSelected={isSelected}
@@ -212,21 +212,21 @@ function HomeScreen() {
           </Pressable>
         </View>
         <View style={dynamicStyles.rightHeaderButtons}>
-          <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
             <Heart color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton nextFocusUp={navigationTarget}
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
             style={dynamicStyles.iconButton}
             onPress={() => router.push({ pathname: "/search" })}
             variant="ghost"
           >
             <Search color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
             <Settings color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
           {isLoggedIn && (
-            <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
+            <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
               <LogOut color={colorScheme === "dark" ? "white" : "black"} size={24} />
             </StyledButton>
           )}
@@ -312,7 +312,7 @@ function HomeScreen() {
             renderItem={({ item, index }) => {
               const isSelected = selectedTag === item;
               return (
-                <StyledButton nextFocusUp={navigationTarget}
+                <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
                   hasTVPreferredFocus={!isAppleTV && index === 0}
                   text={item}
                   onPress={() => handleTagSelect(item)}

@@ -1,6 +1,6 @@
 import { TVNavigationFocus } from '../TVFocusScope';
 import React from 'react';
-import { StyleSheet, View, TVFocusGuideView, findNodeHandle } from 'react-native';
+import { StyleSheet, View, TVFocusGuideView } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 import { Settings } from 'lucide-react-native';
 import { StyledButton } from '../StyledButton';
@@ -15,10 +15,7 @@ const sections = [
 ] as const;
 
 export function TVNavigation() {
-  const { setNavigationTarget } = React.useContext(TVNavigationFocus);
-  const setNavigationRef = React.useCallback((view: View | null) => {
-    if (view) setNavigationTarget(findNodeHandle(view) ?? undefined);
-  }, [setNavigationTarget]);
+  const { registerNavigation, markNavigationFocus } = React.useContext(TVNavigationFocus);
   const router = useRouter();
   const pathname = usePathname();
   if (!isAppleTV) return null;
@@ -27,14 +24,14 @@ export function TVNavigation() {
       <ThemedText style={styles.brand} accessibilityRole="header">OrionTV</ThemedText>
       <View style={styles.sections}>
         {sections.map((section, index) => (
-          <StyledButton ref={pathname === section.path || (index === 0 && !sections.some(item => item.path === pathname)) ? setNavigationRef : undefined} key={section.path} text={section.title} variant="ghost"
+          <StyledButton ref={pathname === section.path || (index === 0 && !sections.some(item => item.path === pathname)) ? registerNavigation : undefined} key={section.path} onFocus={markNavigationFocus} text={section.title} variant="ghost"
             accessibilityRole="tab" accessibilityLabel={section.title}
             isSelected={pathname === section.path}
             onPress={() => { if (pathname !== section.path) router.replace(section.path); }}
             style={styles.tab} textStyle={styles.label} />
         ))}
       </View>
-      <StyledButton variant="ghost" accessibilityLabel="设置" isSelected={pathname === '/settings'}
+      <StyledButton onFocus={markNavigationFocus} variant="ghost" accessibilityLabel="设置" isSelected={pathname === '/settings'}
         onPress={() => { if (pathname !== '/settings') router.push('/settings'); }}>
         <Settings size={28} color={TVTheme.text} />
       </StyledButton>
