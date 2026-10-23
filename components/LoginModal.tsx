@@ -1,3 +1,4 @@
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useRef, useEffect } from "react";
 import { Modal, View, TextInput, StyleSheet, ActivityIndicator, Alert, Keyboard, InteractionManager } from "react-native";
 import { usePathname } from "expo-router";
@@ -35,7 +36,7 @@ const LoginModal = () => {
         const savedCredentials = await LoginCredentialsManager.get();
         if (savedCredentials) {
           setUsername(savedCredentials.username);
-          setPassword(savedCredentials.password);
+          setPassword('');
         }
       };
       loadCredentials();
@@ -147,12 +148,15 @@ const LoginModal = () => {
       <View style={styles.overlay}>
         <ThemedView style={styles.container}>
           <ThemedText style={styles.title}>需要登录</ThemedText>
-          <ThemedText style={styles.subtitle}>服务器需要验证您的身份</ThemedText>
+          <ThemedText style={styles.subtitle}>登录以同步收藏与观看进度</ThemedText>
           {serverConfig?.StorageType !== "localstorage" && (
             <TextInput
               ref={usernameInputRef}
               style={styles.input}
-              placeholder="请输入用户名"
+              placeholder="用户名"
+              accessibilityLabel="用户名"
+              autoCapitalize="none"
+              autoCorrect={false}
               placeholderTextColor="#888"
               value={username}
               onChangeText={setUsername}
@@ -164,7 +168,8 @@ const LoginModal = () => {
           <TextInput
             ref={passwordInputRef}
             style={styles.input}
-            placeholder="请输入密码"
+            placeholder="密码"
+            accessibilityLabel="密码"
             placeholderTextColor="#888"
             secureTextEntry
             value={password}
@@ -196,37 +201,37 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "80%",
-    maxWidth: 400,
-    padding: 24,
-    borderRadius: 12,
+    maxWidth: isAppleTV ? 720 : 400,
+    padding: isAppleTV ? 48 : 24,
+    borderRadius: isAppleTV ? 28 : 12,
     alignItems: "center",
   },
   title: {
-    fontSize: 22,
+    fontSize: isAppleTV ? 38 : 22,
     fontWeight: "bold",
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: isAppleTV ? 25 : 16,
     color: "#ccc",
     marginBottom: 20,
     textAlign: "center",
   },
   input: {
     width: "100%",
-    height: 50,
+    minHeight: isAppleTV ? 68 : 50,
     backgroundColor: "#333",
     borderRadius: 8,
     paddingHorizontal: 16,
     color: "#fff",
-    fontSize: 16,
+    fontSize: isAppleTV ? 25 : 16,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: "#555",
   },
   button: {
     width: "100%",
-    height: 50,
+    minHeight: isAppleTV ? 68 : 50,
   },
 });
 

@@ -1,3 +1,5 @@
+import { TVNavigation } from '@/components/navigation/TVNavigation';
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, Alert, Platform } from "react-native";
 import { useTVEventHandler } from "react-native";
@@ -7,7 +9,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { StyledButton } from "@/components/StyledButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSettingsStore } from "@/stores/settingsStore";
-// import useAuthStore from "@/stores/authStore";
+import useAuthStore from "@/stores/authStore";
 import { useRemoteControlStore } from "@/stores/remoteControlStore";
 import { APIConfigSection } from "@/components/settings/APIConfigSection";
 import { LiveStreamSection } from "@/components/settings/LiveStreamSection";
@@ -37,6 +39,7 @@ function isSectionItem(
 export default function SettingsScreen() {
   const { loadSettings, saveSettings, setApiBaseUrl, setM3uUrl } = useSettingsStore();
   const { lastMessage, targetPage, clearMessage } = useRemoteControlStore();
+  const { isLoggedIn, logout, showLoginModal } = useAuthStore();
   const backgroundColor = useThemeColor({}, "background");
   const insets = useSafeAreaInsets();
 
@@ -242,6 +245,7 @@ export default function SettingsScreen() {
       style={{ flex: 1, backgroundColor }}
     >
 
+      {isAppleTV && <TVNavigation />}
       <ThemedView style={[commonStyles.container, dynamicStyles.container]}>
         {deviceType === "tv" && (
           <View style={dynamicStyles.header}>
@@ -271,6 +275,14 @@ export default function SettingsScreen() {
             </View>
           ))}
         </View>
+
+        {isAppleTV && <View style={{ paddingVertical: 24, gap: 16 }}>
+          <ThemedText type="subtitle">账户</ThemedText>
+          <StyledButton text={isLoggedIn ? '退出登录' : '登录 LunaTV'}
+            onPress={() => isLoggedIn ? Alert.alert('退出登录', '退出后可以重新登录其他账户。', [
+              { text: '取消', style: 'cancel' }, { text: '退出登录', onPress: logout },
+            ]) : showLoginModal()} />
+        </View>}
 
         <View style={dynamicStyles.footer}>
           <StyledButton
@@ -309,6 +321,10 @@ const createResponsiveStyles = (deviceType: string, spacing: number, insets: any
     container: {
       flex: 1,
       padding: spacing,
+      width: isAppleTV ? '100%' : undefined,
+      maxWidth: isAppleTV ? 1120 : undefined,
+      alignSelf: isAppleTV ? 'center' : undefined,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : spacing,
       paddingTop: isTV ? spacing * 2 : isMobile ? insets.top + spacing : insets.top + spacing * 1.5,
     },
     header: {
@@ -318,7 +334,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number, insets: any
       marginBottom: spacing,
     },
     title: {
-      fontSize: isMobile ? 24 : isTablet ? 28 : 32,
+      fontSize: isAppleTV ? 42 : isMobile ? 24 : isTablet ? 28 : 32,
       fontWeight: "bold",
       paddingTop: spacing,
       color: "white",
@@ -335,7 +351,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number, insets: any
     },
     saveButton: {
       minHeight: isMobile ? minTouchTarget : isTablet ? 50 : 50,
-      width: isMobile ? "100%" : isTablet ? 140 : 120,
+      width: isAppleTV ? 220 : isMobile ? "100%" : isTablet ? 140 : 120,
       maxWidth: isMobile ? 280 : undefined,
     },
     disabledButton: {

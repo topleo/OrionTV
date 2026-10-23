@@ -29,7 +29,8 @@
           }
         }
       ],
-      "expo-router"
+      "expo-router",
+      "./plugins/withTVSceneLifecycle"
     ],
     "experiments": {
       "typedRoutes": true
@@ -81,7 +82,8 @@
       ],
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "buildNumber": "3"
     },
     "scheme": "oriontv",
     "extra": {

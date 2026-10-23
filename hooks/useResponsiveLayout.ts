@@ -1,3 +1,4 @@
+import { isAppleTV, TVTheme } from '@/constants/TVTheme';
 import { useState, useEffect } from "react";
 import { Dimensions, Platform } from "react-native";
 
@@ -34,7 +35,7 @@ const getLayoutConfig = (
   height: number,
   isPortrait: boolean
 ): ResponsiveConfig => {
-  const spacing = deviceType === "mobile" ? 8 : deviceType === "tablet" ? 12 : 16;
+  const spacing = isAppleTV ? 24 : deviceType === "mobile" ? 8 : deviceType === "tablet" ? 12 : 16;
 
   let columns: number;
   let cardWidth: number;
@@ -56,9 +57,9 @@ const getLayoutConfig = (
 
     case "tv":
     default:
-      columns = 5;
-      cardWidth = 160; // Fixed width for TV
-      cardHeight = 240; // Fixed height for TV
+      columns = isAppleTV ? (width >= 1680 ? 6 : width >= 1200 ? 5 : 4) : 5;
+      cardWidth = isAppleTV ? (width - TVTheme.gutter * 2 - (columns - 1) * spacing) / columns : 160; // Fixed width for TV
+      cardHeight = isAppleTV ? cardWidth * 1.5 : 240; // Fixed height for TV
       break;
   }
 

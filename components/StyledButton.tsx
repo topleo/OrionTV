@@ -1,5 +1,8 @@
 import React, { forwardRef } from "react";
 import { Animated, Pressable, StyleSheet, StyleProp, ViewStyle, PressableProps, TextStyle, View, Platform } from "react-native";
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { Text } from 'react-native';
 import { ThemedText } from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useButtonAnimation } from "@/hooks/useAnimation";
@@ -14,7 +17,7 @@ interface StyledButtonProps extends PressableProps {
   textStyle?: StyleProp<TextStyle>;
 }
 
-export const StyledButton = forwardRef<View, StyledButtonProps>(
+const LegacyStyledButton = forwardRef<View, StyledButtonProps>(
   ({ children, text, variant = "default", isSelected = false, style, textStyle, ...rest }, ref) => {
     const colorScheme = "dark";
     const colors = Colors[colorScheme];
@@ -142,4 +145,42 @@ export const StyledButton = forwardRef<View, StyledButtonProps>(
   }
 );
 
-StyledButton.displayName = "StyledButton";
+LegacyStyledButton.displayName = "LegacyStyledButton";
+
+const TVStyledButton = forwardRef<View, StyledButtonProps>(({ text, children, variant = 'default', isSelected = false, disabled, style, textStyle, onFocus, onBlur, accessibilityState, ...rest }, ref) => {
+  const [focused, setFocused] = React.useState(false);
+  const reducedMotion = useReducedMotion();
+  const prominent = focused || variant === 'primary';
+  const foreground = prominent ? TVTheme.onFocus : TVTheme.text;
+  const content = React.Children.map(children, child => {
+    if (!React.isValidElement(child)) return child;
+    const element = child as React.ReactElement<any>;
+    if (element.type === ThemedText || element.type === Text) return React.cloneElement(element, { style: [element.props.style, { color: foreground }] });
+    if ('color' in element.props) return React.cloneElement(element, { color: foreground });
+    return element;
+  });
+  return (
+    <View style={[style, { opacity: disabled ? 0.4 : 1 }]}>
+      <Pressable {...rest} ref={ref} disabled={disabled} accessibilityRole={rest.accessibilityRole || 'button'}
+        accessibilityState={{ ...accessibilityState, selected: isSelected, disabled: !!disabled }}
+        tvParallaxProperties={{ enabled: !reducedMotion, magnification: 1.035, pressMagnification: 1.01 }}
+        onFocus={event => { setFocused(true); onFocus?.(event); }}
+        onBlur={event => { setFocused(false); onBlur?.(event); }}
+        style={({ pressed }) => ({ minHeight: 58, paddingHorizontal: text ? 24 : 18, paddingVertical: 12,
+          borderRadius: variant === 'ghost' ? 30 : TVTheme.radius, borderWidth: 2,
+          borderColor: focused ? TVTheme.focus : 'transparent',
+          backgroundColor: prominent ? TVTheme.focus : isSelected ? TVTheme.raised : variant === 'ghost' ? 'transparent' : TVTheme.surface,
+          alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 10,
+          opacity: pressed ? 0.78 : 1,
+          shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowRadius: focused ? 18 : 0, shadowOpacity: focused ? 0.3 : 0,
+        })}>
+        {text ? <ThemedText style={[{ fontSize: 24, lineHeight: 32, fontWeight: '600' }, textStyle, { color: foreground }]}>{text}</ThemedText> : content}
+      </Pressable>
+    </View>
+  );
+});
+TVStyledButton.displayName = 'TVStyledButton';
+export const StyledButton = forwardRef<View, StyledButtonProps>((props, ref) =>
+  isAppleTV ? <TVStyledButton {...props} ref={ref} /> : <LegacyStyledButton {...props} ref={ref} />
+);
+StyledButton.displayName = 'StyledButton';

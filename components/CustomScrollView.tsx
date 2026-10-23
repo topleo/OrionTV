@@ -1,3 +1,6 @@
+import { TVGridFirstRow } from './TVFocusScope';
+import { TVGridCardWidth } from './TVGridLayout';
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, BackHandler } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
@@ -35,6 +38,7 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
   const responsiveConfig = useResponsiveLayout();
   const commonStyles = getCommonResponsiveStyles(responsiveConfig);
   const { deviceType } = responsiveConfig;
+  const [gridWidth, setGridWidth] = useState(responsiveConfig.screenWidth);
 
   // 添加返回键处理逻辑
   useEffect(() => {
@@ -53,6 +57,7 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
 
   // 使用响应式列数，如果没有明确指定的话
   const effectiveColumns = numColumns || responsiveConfig.columns;
+  const tvCardWidth = (gridWidth - TVTheme.gutter * 2 - (effectiveColumns - 1) * responsiveConfig.spacing) / effectiveColumns;
 
   const handleScroll = useCallback(
     ({ nativeEvent }: { nativeEvent: any }) => {
@@ -134,24 +139,26 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
   const dynamicStyles = StyleSheet.create({
     listContent: {
       paddingBottom: responsiveConfig.spacing * 2,
-      paddingHorizontal: responsiveConfig.spacing / 2,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : responsiveConfig.spacing / 2,
+      paddingTop: isAppleTV ? 12 : 0,
     },
     rowContainer: {
       flexDirection: "row",
       marginBottom: responsiveConfig.spacing,
     },
     fullRowContainer: {
-      justifyContent: "space-around",
-      marginRight: responsiveConfig.spacing / 2,
+      justifyContent: isAppleTV ? "flex-start" : "space-around",
+      gap: isAppleTV ? responsiveConfig.spacing : 0,
+      marginRight: isAppleTV ? 0 : responsiveConfig.spacing / 2,
     },
     partialRowContainer: {
       justifyContent: "flex-start",
     },
     itemContainer: {
-      width: responsiveConfig.cardWidth,
+      width: isAppleTV ? tvCardWidth : responsiveConfig.cardWidth,
     },
     itemWithMargin: {
-      width: responsiveConfig.cardWidth,
+      width: isAppleTV ? tvCardWidth : responsiveConfig.cardWidth,
       marginRight: responsiveConfig.spacing,
     },
     scrollToTopButton: {
@@ -166,7 +173,8 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
   });
 
   return (
-    <View style={{ flex: 1 }}>
+    <TVGridCardWidth.Provider value={isAppleTV ? tvCardWidth : undefined}>
+    <View style={{ flex: 1 }} onLayout={event => setGridWidth(event.nativeEvent.layout.width)}>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={dynamicStyles.listContent}
@@ -181,7 +189,8 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
               const rowStyle = isFullRow ? dynamicStyles.fullRowContainer : dynamicStyles.partialRowContainer;
 
               return (
-                <View key={rowIndex} style={[dynamicStyles.rowContainer, rowStyle]}>
+                <TVGridFirstRow.Provider key={rowIndex} value={rowIndex === 0}>
+                <View style={[dynamicStyles.rowContainer, rowStyle]}>
                   {row.map((item, itemIndex) => {
                     const actualIndex = rowIndex * effectiveColumns + itemIndex;
                     const isLastItemInPartialRow = !isFullRow && itemIndex === row.length - 1;
@@ -199,6 +208,7 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
                     );
                   })}
                 </View>
+                </TVGridFirstRow.Provider>
               );
             })}
             {renderFooter()}
@@ -219,6 +229,7 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
         </TouchableOpacity>
       )}
     </View>
+    </TVGridCardWidth.Provider>
   );
 };
 

@@ -1,3 +1,4 @@
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -118,7 +119,7 @@ export default function DetailScreen() {
                 <ThemedText style={dynamicStyles.title} numberOfLines={2}>
                   {detail.title}
                 </ThemedText>
-                <StyledButton onPress={toggleFavorite} variant="ghost" style={dynamicStyles.favoriteButton}>
+                <StyledButton onPress={toggleFavorite} accessibilityLabel={isFavorited ? "取消收藏" : "收藏影片"} variant="ghost" style={dynamicStyles.favoriteButton}>
                   <FontAwesome
                     name={isFavorited ? "heart" : "heart-o"}
                     size={20}
@@ -201,7 +202,7 @@ export default function DetailScreen() {
                 <ThemedText style={dynamicStyles.title} numberOfLines={1} ellipsizeMode="tail">
                   {detail.title}
                 </ThemedText>
-                <StyledButton onPress={toggleFavorite} variant="ghost" style={dynamicStyles.favoriteButton}>
+                <StyledButton onPress={toggleFavorite} accessibilityLabel={isFavorited ? "取消收藏" : "收藏影片"} variant="ghost" style={dynamicStyles.favoriteButton}>
                   <FontAwesome
                     name={isFavorited ? "heart" : "heart-o"}
                     size={24}
@@ -328,20 +329,20 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     // 平板和TV端样式
     topContainer: {
       flexDirection: "row",
-      padding: spacing,
+      padding: isAppleTV ? TVTheme.gutter : spacing,
     },
     poster: {
-      width: isTV ? 200 : 160,
-      height: isTV ? 300 : 240,
+      width: isAppleTV ? 300 : isTV ? 200 : 160,
+      height: isAppleTV ? 450 : isTV ? 300 : 240,
       borderRadius: 8,
     },
     infoContainer: {
       flex: 1,
-      marginLeft: spacing,
+      marginLeft: isAppleTV ? 40 : spacing,
       justifyContent: "flex-start",
     },
     descriptionScrollView: {
-      height: 150,
+      height: isAppleTV ? 260 : 150,
     },
 
     // 通用样式
@@ -352,10 +353,11 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
     title: {
       paddingTop: 16,
-      fontSize: isMobile ? 20 : isTablet ? 24 : 28,
+      fontSize: isAppleTV ? 48 : isMobile ? 20 : isTablet ? 24 : 28,
       fontWeight: "bold",
       flexShrink: 1,
       color: 'white',
+      lineHeight: isAppleTV ? 58 : undefined,
     },
     favoriteButton: {
       padding: 10,
@@ -367,19 +369,19 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
       marginBottom: spacing / 2,
     },
     metaText: {
-      color: "#aaa",
+      color: isAppleTV ? TVTheme.secondaryText : "#aaa",
       marginRight: spacing / 2,
-      fontSize: isMobile ? 12 : 14,
+      fontSize: isAppleTV ? 24 : isMobile ? 12 : 14,
     },
     description: {
-      fontSize: isMobile ? 13 : 14,
+      fontSize: isAppleTV ? 25 : isMobile ? 13 : 14,
       color: "#ccc",
-      lineHeight: isMobile ? 18 : 22,
+      lineHeight: isAppleTV ? 36 : isMobile ? 18 : 22,
     },
 
     // 播放源和剧集样式
     bottomContainer: {
-      paddingHorizontal: spacing,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : spacing,
     },
     sourcesContainer: {
       marginTop: spacing,
@@ -390,7 +392,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
       marginBottom: spacing / 2,
     },
     sourcesTitle: {
-      fontSize: isMobile ? 16 : isTablet ? 18 : 20,
+      fontSize: isAppleTV ? 32 : isMobile ? 16 : isTablet ? 18 : 20,
       fontWeight: "bold",
       color: 'white',
     },
@@ -404,7 +406,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
     sourceButtonText: {
       color: "white",
-      fontSize: isMobile ? 14 : 16,
+      fontSize: isAppleTV ? 24 : isMobile ? 14 : 16,
     },
     badge: {
       backgroundColor: "#666",
@@ -415,7 +417,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
     badgeText: {
       color: "#fff",
-      fontSize: isMobile ? 10 : 12,
+      fontSize: isAppleTV ? 20 : isMobile ? 10 : 12,
       fontWeight: "bold",
       paddingBottom: 2.5,
     },
@@ -428,7 +430,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
       paddingBottom: spacing * 2,
     },
     episodesTitle: {
-      fontSize: isMobile ? 16 : isTablet ? 18 : 20,
+      fontSize: isAppleTV ? 32 : isMobile ? 16 : isTablet ? 18 : 20,
       fontWeight: "bold",
       marginBottom: spacing / 2,
       color: 'white',
@@ -443,7 +445,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
     episodeButtonText: {
       color: "white",
-      fontSize: isMobile ? 12 : 14,
+      fontSize: isAppleTV ? 24 : isMobile ? 12 : 14,
     },
   });
 };

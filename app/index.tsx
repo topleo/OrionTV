@@ -1,3 +1,6 @@
+import { TVFocusScope, TVNavigationFocus } from '@/components/TVFocusScope';
+import { TVNavigation } from '@/components/navigation/TVNavigation';
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useEffect, useCallback, useRef, useState } from "react";
 import { View, StyleSheet, ActivityIndicator, FlatList, Pressable, Animated, StatusBar, Platform, BackHandler, ToastAndroid } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,7 +22,8 @@ import { Colors } from "@/constants/Colors";
 
 const LOAD_MORE_THRESHOLD = 200;
 
-export default function HomeScreen() {
+function HomeScreen() {
+  const { navigationTarget, markContentFocus } = React.useContext(TVNavigationFocus);
   const router = useRouter();
   const colorScheme = "dark";
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -153,7 +157,7 @@ export default function HomeScreen() {
   const renderCategory = ({ item }: { item: Category }) => {
     const isSelected = selectedCategory?.title === item.title;
     return (
-      <StyledButton
+      <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
         text={item.title}
         onPress={() => handleCategorySelect(item)}
         isSelected={isSelected}
@@ -191,6 +195,7 @@ export default function HomeScreen() {
 
   // TV端和平板端的顶部导航
   const renderHeader = () => {
+    if (isAppleTV) return <TVNavigation />;
     if (deviceType === "mobile") {
       // 移动端不显示顶部导航，使用底部Tab导航
       return null;
@@ -207,21 +212,21 @@ export default function HomeScreen() {
           </Pressable>
         </View>
         <View style={dynamicStyles.rightHeaderButtons}>
-          <StyledButton style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
             <Heart color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
             style={dynamicStyles.iconButton}
             onPress={() => router.push({ pathname: "/search" })}
             variant="ghost"
           >
             <Search color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
             <Settings color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
           {isLoggedIn && (
-            <StyledButton style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
+            <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)} style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
               <LogOut color={colorScheme === "dark" ? "white" : "black"} size={24} />
             </StyledButton>
           )}
@@ -234,7 +239,8 @@ export default function HomeScreen() {
   const dynamicStyles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: deviceType === "mobile" ? insets.top : deviceType === "tablet" ? insets.top + 20 : 40,
+      paddingHorizontal: isAppleTV ? 0 : spacing,
+      paddingTop: isAppleTV ? 12 : deviceType === "mobile" ? insets.top : deviceType === "tablet" ? insets.top + 20 : 40,
     },
     headerContainer: {
       flexDirection: "row",
@@ -260,7 +266,8 @@ export default function HomeScreen() {
       paddingBottom: spacing / 2,
     },
     categoryListContent: {
-      paddingHorizontal: spacing,
+      paddingHorizontal: isAppleTV ? TVTheme.gutter : spacing,
+      paddingVertical: isAppleTV ? 10 : 0,
     },
     categoryButton: {
       paddingHorizontal: deviceType === "tv" ? spacing / 4 : spacing / 2,
@@ -269,7 +276,7 @@ export default function HomeScreen() {
       marginHorizontal: deviceType === "tv" ? spacing / 4 : spacing / 2, // TV端使用更小的间距
     },
     categoryText: {
-      fontSize: deviceType === "mobile" ? 14 : 16,
+      fontSize: isAppleTV ? 24 : deviceType === "mobile" ? 14 : 16,
       fontWeight: "500",
     },
     contentContainer: {
@@ -305,8 +312,8 @@ export default function HomeScreen() {
             renderItem={({ item, index }) => {
               const isSelected = selectedTag === item;
               return (
-                <StyledButton
-                  hasTVPreferredFocus={index === 0}
+                <StyledButton nextFocusUp={navigationTarget} onFocus={() => markContentFocus(true)}
+                  hasTVPreferredFocus={!isAppleTV && index === 0}
                   text={item}
                   onPress={() => handleTagSelect(item)}
                   isSelected={isSelected}
@@ -324,6 +331,9 @@ export default function HomeScreen() {
         </View>
       )}
 
+      {isAppleTV && <View style={{ paddingHorizontal: TVTheme.gutter, paddingTop: 12, paddingBottom: 12 }}>
+        <ThemedText style={{ fontSize: 36, lineHeight: 46, fontWeight: '700' }} accessibilityRole="header">{selectedCategory?.title || '现在观看'}</ThemedText>
+      </View>}
       {/* 内容网格 */}
       {shouldShowApiConfig ? (
         <View style={commonStyles.center}>
@@ -378,4 +388,8 @@ export default function HomeScreen() {
   }
 
   return <ResponsiveNavigation>{content}</ResponsiveNavigation>;
+}
+
+export default function HomeScreenWithTVFocus() {
+  return <TVFocusScope><HomeScreen /></TVFocusScope>;
 }

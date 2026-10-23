@@ -1,3 +1,4 @@
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useCallback } from "react";
 import { View, Switch, StyleSheet, Pressable, Animated, Platform, TouchableOpacity } from "react-native";
 import { useTVEventHandler } from "react-native";
@@ -126,13 +127,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   settingName: {
-    fontSize: 16,
+    fontSize: isAppleTV ? 26 : 16,
     fontWeight: "bold",
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 14,
-    color: "#888",
+    color: isAppleTV ? TVTheme.secondaryText : "#888",
   },
   statusContainer: {
     marginTop: 16,

@@ -1,3 +1,6 @@
+import { TVNavigation } from '@/components/navigation/TVNavigation';
+import { ThemedText } from '@/components/ThemedText';
+import { isAppleTV, TVTheme } from '@/constants/TVTheme';
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, FlatList, StyleSheet, ActivityIndicator, Modal, useTVEventHandler, HWEvent, Text } from "react-native";
 import LivePlayer from "@/components/LivePlayer";
@@ -169,6 +172,16 @@ export default function LiveScreen() {
       {renderLiveContent()}
     </ThemedView>
   );
+
+  if (isAppleTV && !m3uUrl) {
+    return <ThemedView style={{ flex: 1 }}>
+      <TVNavigation />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20, padding: TVTheme.gutter }}>
+        <ThemedText type="title">添加直播频道</ThemedText>
+        <ThemedText style={{ color: TVTheme.secondaryText }}>在设置中填写 M3U 地址，即可在这里观看直播。</ThemedText>
+      </View>
+    </ThemedView>;
+  }
 
   // 根据设备类型决定是否包装在响应式导航中
   if (deviceType === 'tv') {

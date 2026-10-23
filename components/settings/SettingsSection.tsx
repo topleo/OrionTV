@@ -1,3 +1,4 @@
+import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState } from "react";
 import { StyleSheet, Pressable, Platform } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
@@ -52,15 +53,16 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({ children, onFo
 
 const styles = StyleSheet.create({
   section: {
-    padding: 20,
+    padding: isAppleTV ? 32 : 20,
+    backgroundColor: isAppleTV ? TVTheme.surface : undefined,
     marginBottom: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#333",
+    borderRadius: isAppleTV ? 24 : 12,
+    borderWidth: isAppleTV ? 2 : 1,
+    borderColor: isAppleTV ? "transparent" : "#333",
   },
   sectionFocused: {
     borderColor: Colors.dark.primary,
-    backgroundColor: "#007AFF10",
+    backgroundColor: isAppleTV ? TVTheme.raised : "#007AFF10",
   },
   sectionPressable: {
     width: "100%",

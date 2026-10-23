@@ -1,3 +1,4 @@
+import { isAppleTV } from '@/constants/TVTheme';
 import React, { ComponentProps } from "react";
 import { StyledButton } from "./StyledButton";
 import { StyleSheet, View, Text } from "react-native";
@@ -20,10 +21,10 @@ const styles = StyleSheet.create({
   },
   timeLabel: {
     position: "absolute",
-    top: 14,
-    right: 12,
+    top: isAppleTV ? 0 : 14,
+    right: isAppleTV ? 0 : 12,
     color: "white",
-    fontSize: 10,
+    fontSize: isAppleTV ? 20 : 10,
     fontWeight: "bold",
     backgroundColor: "rgba(0,0,0,0.6)",
     paddingHorizontal: 4,
