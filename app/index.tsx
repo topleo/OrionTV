@@ -1,3 +1,4 @@
+import { TVFocusScope, TVNavigationFocus } from '@/components/TVFocusScope';
 import { TVNavigation } from '@/components/navigation/TVNavigation';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useEffect, useCallback, useRef, useState } from "react";
@@ -21,7 +22,8 @@ import { Colors } from "@/constants/Colors";
 
 const LOAD_MORE_THRESHOLD = 200;
 
-export default function HomeScreen() {
+function HomeScreen() {
+  const { navigationTarget } = React.useContext(TVNavigationFocus);
   const router = useRouter();
   const colorScheme = "dark";
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -155,7 +157,7 @@ export default function HomeScreen() {
   const renderCategory = ({ item }: { item: Category }) => {
     const isSelected = selectedCategory?.title === item.title;
     return (
-      <StyledButton
+      <StyledButton nextFocusUp={navigationTarget}
         text={item.title}
         onPress={() => handleCategorySelect(item)}
         isSelected={isSelected}
@@ -210,21 +212,21 @@ export default function HomeScreen() {
           </Pressable>
         </View>
         <View style={dynamicStyles.rightHeaderButtons}>
-          <StyledButton style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={() => router.push("/favorites")} variant="ghost">
             <Heart color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton
+          <StyledButton nextFocusUp={navigationTarget}
             style={dynamicStyles.iconButton}
             onPress={() => router.push({ pathname: "/search" })}
             variant="ghost"
           >
             <Search color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
-          <StyledButton style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
+          <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={() => router.push("/settings")} variant="ghost">
             <Settings color={colorScheme === "dark" ? "white" : "black"} size={24} />
           </StyledButton>
           {isLoggedIn && (
-            <StyledButton style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
+            <StyledButton nextFocusUp={navigationTarget} style={dynamicStyles.iconButton} onPress={logout} variant="ghost">
               <LogOut color={colorScheme === "dark" ? "white" : "black"} size={24} />
             </StyledButton>
           )}
@@ -310,7 +312,7 @@ export default function HomeScreen() {
             renderItem={({ item, index }) => {
               const isSelected = selectedTag === item;
               return (
-                <StyledButton
+                <StyledButton nextFocusUp={navigationTarget}
                   hasTVPreferredFocus={!isAppleTV && index === 0}
                   text={item}
                   onPress={() => handleTagSelect(item)}
@@ -386,4 +388,8 @@ export default function HomeScreen() {
   }
 
   return <ResponsiveNavigation>{content}</ResponsiveNavigation>;
+}
+
+export default function HomeScreenWithTVFocus() {
+  return <TVFocusScope><HomeScreen /></TVFocusScope>;
 }

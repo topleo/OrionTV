@@ -1,3 +1,4 @@
+import { TVGridFirstRow } from './TVFocusScope';
 import { TVGridCardWidth } from './TVGridLayout';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useCallback, useRef, useState, useEffect } from "react";
@@ -188,7 +189,8 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
               const rowStyle = isFullRow ? dynamicStyles.fullRowContainer : dynamicStyles.partialRowContainer;
 
               return (
-                <View key={rowIndex} style={[dynamicStyles.rowContainer, rowStyle]}>
+                <TVGridFirstRow.Provider key={rowIndex} value={rowIndex === 0}>
+                <View style={[dynamicStyles.rowContainer, rowStyle]}>
                   {row.map((item, itemIndex) => {
                     const actualIndex = rowIndex * effectiveColumns + itemIndex;
                     const isLastItemInPartialRow = !isFullRow && itemIndex === row.length - 1;
@@ -206,6 +208,7 @@ const CustomScrollView: React.FC<CustomScrollViewProps> = ({
                     );
                   })}
                 </View>
+                </TVGridFirstRow.Provider>
               );
             })}
             {renderFooter()}

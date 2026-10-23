@@ -1,3 +1,4 @@
+import { TVFocusScope, TVNavigationFocus } from '@/components/TVFocusScope';
 import { TVNavigation } from '@/components/navigation/TVNavigation';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useState, useRef, useEffect } from "react";
@@ -24,7 +25,7 @@ import Logger from '@/utils/Logger';
 
 const logger = Logger.withTag('SearchScreen');
 
-export default function SearchScreen() {
+function SearchScreen() {
   const [keyword, setKeyword] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -241,3 +242,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
   });
 };
+
+export default function SearchScreenWithTVFocus() {
+  return <TVFocusScope><SearchScreen /></TVFocusScope>;
+}

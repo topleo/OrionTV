@@ -1,5 +1,6 @@
+import { TVNavigationFocus } from '../TVFocusScope';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TVFocusGuideView, findNodeHandle } from 'react-native';
 import { usePathname, useRouter } from 'expo-router';
 import { Settings } from 'lucide-react-native';
 import { StyledButton } from '../StyledButton';
@@ -14,15 +15,19 @@ const sections = [
 ] as const;
 
 export function TVNavigation() {
+  const { setNavigationTarget } = React.useContext(TVNavigationFocus);
+  const setNavigationRef = React.useCallback((view: View | null) => {
+    if (view) setNavigationTarget(findNodeHandle(view) ?? undefined);
+  }, [setNavigationTarget]);
   const router = useRouter();
   const pathname = usePathname();
   if (!isAppleTV) return null;
   return (
-    <View style={styles.container}>
+    <TVFocusGuideView autoFocus style={styles.container}>
       <ThemedText style={styles.brand} accessibilityRole="header">OrionTV</ThemedText>
       <View style={styles.sections}>
-        {sections.map(section => (
-          <StyledButton key={section.path} text={section.title} variant="ghost"
+        {sections.map((section, index) => (
+          <StyledButton ref={pathname === section.path || (index === 0 && !sections.some(item => item.path === pathname)) ? setNavigationRef : undefined} key={section.path} text={section.title} variant="ghost"
             accessibilityRole="tab" accessibilityLabel={section.title}
             isSelected={pathname === section.path}
             onPress={() => { if (pathname !== section.path) router.replace(section.path); }}
@@ -33,7 +38,7 @@ export function TVNavigation() {
         onPress={() => { if (pathname !== '/settings') router.push('/settings'); }}>
         <Settings size={28} color={TVTheme.text} />
       </StyledButton>
-    </View>
+    </TVFocusGuideView>
   );
 }
 const styles = StyleSheet.create({

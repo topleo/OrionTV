@@ -1,3 +1,4 @@
+import { TVNavigationFocus, TVGridFirstRow } from './TVFocusScope';
 import { TVGridCardWidth } from './TVGridLayout';
 import React, { forwardRef, useState, useContext } from 'react';
 import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
@@ -21,6 +22,8 @@ const AppleVideoCard = forwardRef<View, Props>((props, ref) => {
   const router = useRouter();
   const layout = useResponsiveLayout();
   const gridWidth = useContext(TVGridCardWidth);
+  const { navigationTarget } = useContext(TVNavigationFocus);
+  const firstRow = useContext(TVGridFirstRow);
   const cardWidth = gridWidth || layout.cardWidth;
   const cardHeight = cardWidth * 1.5;
   const reducedMotion = useReducedMotion();
@@ -46,7 +49,7 @@ const AppleVideoCard = forwardRef<View, Props>((props, ref) => {
     ]);
   };
   return (
-    <Pressable ref={ref} onPress={open} onLongPress={removeRecord} delayLongPress={1000}
+    <Pressable ref={ref} nextFocusUp={firstRow ? navigationTarget : undefined} onPress={open} onLongPress={removeRecord} delayLongPress={1000}
       onFocus={() => { setFocused(true); onFocus?.(); }} onBlur={() => setFocused(false)}
       accessibilityRole="button" accessibilityLabel={`${title}${year ? `，${year}` : ''}${continuing ? '，继续观看' : ''}`}
       accessibilityHint={progress !== undefined ? '按下播放，长按可移除观看记录' : '查看影片详情和播放来源'}

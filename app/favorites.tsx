@@ -1,3 +1,4 @@
+import { TVFocusScope, TVNavigationFocus } from '@/components/TVFocusScope';
 import { TVNavigation } from '@/components/navigation/TVNavigation';
 import { TVTheme, isAppleTV } from '@/constants/TVTheme';
 import React, { useEffect } from "react";
@@ -14,7 +15,7 @@ import { getCommonResponsiveStyles } from "@/utils/ResponsiveStyles";
 import ResponsiveNavigation from "@/components/navigation/ResponsiveNavigation";
 import ResponsiveHeader from "@/components/navigation/ResponsiveHeader";
 
-export default function FavoritesScreen() {
+function FavoritesScreen() {
   const { favorites, loading, error, fetchFavorites } = useFavoritesStore();
 
   // 响应式布局配置
@@ -109,3 +110,7 @@ const createResponsiveStyles = (deviceType: string, spacing: number) => {
     },
   });
 };
+
+export default function FavoritesScreenWithTVFocus() {
+  return <TVFocusScope><FavoritesScreen /></TVFocusScope>;
+}
