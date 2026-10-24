@@ -16,6 +16,8 @@ class Handler(BaseHTTPRequestHandler):
   else:
    value={}
    if path.path=='/api/server-config':value={'SiteName':'UI Fixture','StorageType':'kvrocks'}
+   elif path.path in ['/api/search','/api/search/one']:
+    value={'results':[{'id':'episodes-fixture','source':'fixture','source_name':'测试来源','title':q.get('q',['选集测试'])[0],'episodes':['https://example.invalid/episode.m3u8']*120}]}
    elif path.path=='/api/douban':
     offset=int(q.get('pageStart',['0'])[0]);limit=9 if q.get('type')==['movie'] else 43
     value={'code':200,'list':[{'title':('较长影片标题用于检查两行排版 ' if n%3==0 else '影片 ')+str(n+1).zfill(2),'poster':'http://127.0.0.1:18087/poster/'+('square' if n%2 else 'wide'),'rate':'8.8'} for n in range(offset,min(offset+20,limit))]}

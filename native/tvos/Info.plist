@@ -23,7 +23,7 @@
 		<string>AppleTVOS</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>102</string>
+	<string>103</string>
 	<key>MinimumOSVersion</key>
 	<string>18.0</string>
 	<key>NSAppTransportSecurity</key>

@@ -1,5 +1,29 @@
 import XCTest
 final class NavigationUITests: XCTestCase {
+    func testEpisodeButtonsHaveUniformBounds() throws {
+        let app=XCUIApplication(bundleIdentifier:"com.oriontv.layout-preview")
+        app.launch()
+        let remote=XCUIRemote.shared
+        sleep(3)
+        remote.press(.right)
+        remote.press(.select)
+        XCTAssertTrue(app.buttons["episode-1"].waitForExistence(timeout:10))
+        func checkVisibleButtons() {
+            let buttons=app.buttons.matching(NSPredicate(format:"identifier BEGINSWITH %@", "episode-")).allElementsBoundByIndex.filter { !$0.hasFocus && $0.frame.height > 0 }
+            XCTAssertGreaterThan(buttons.count, 1)
+            if let first=buttons.first {
+                for button in buttons {
+                    XCTAssertEqual(button.frame.width, first.frame.width, accuracy:1)
+                    XCTAssertEqual(button.frame.height, first.frame.height, accuracy:1)
+                }
+            }
+        }
+        checkVisibleButtons()
+        for _ in 0..<17 { remote.press(.down) }
+        XCTAssertTrue(app.buttons["episode-100"].exists)
+        checkVisibleButtons()
+        let shot=XCTAttachment(screenshot:app.screenshot());shot.lifetime = .keepAlways;add(shot)
+    }
     func testEmptyLiveCanReturnToSidebarAndSettings() throws {
         for (url, title) in [("", "添加直播频道"), ("http://127.0.0.1:18087/empty.m3u", "暂无直播频道"), ("not-a-url", "无法加载频道")] {
             let app=XCUIApplication(bundleIdentifier:"com.oriontv.layout-preview")

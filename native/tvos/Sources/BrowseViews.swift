@@ -147,7 +147,7 @@ struct SettingsView: View {
             Section("账户") { Button("退出登录", role: .destructive) { confirmLogout = true } }
             Section("关于") {
                 LabeledContent("客户端", value: "OrionTV 原生版")
-                LabeledContent("版本", value: "1.3.14 · Native 2.1")
+                LabeledContent("版本", value: "1.3.14 · Native 2.2")
                 Text("SwiftUI · AVKit").foregroundStyle(.secondary)
             }
             if let error { Text(error).foregroundStyle(.orange) }

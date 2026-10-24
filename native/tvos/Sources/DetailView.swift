@@ -43,9 +43,16 @@ struct DetailView: View {
                 }
                 if let item = current, !item.episodes.isEmpty {
                     Text("选集").font(.title2.bold())
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 220), spacing: 24)], spacing: 24) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 220), spacing: 32)], spacing: 32) {
                         ForEach(item.episodes.indices, id: \.self) { index in
-                            Button("第 \(index + 1) 集") { play(item, index: index) }.frame(maxWidth: .infinity)
+                            Button { play(item, index: index) } label: {
+                                Text("第 \(index + 1) 集")
+                                    .font(.system(size: 24, weight: .medium)).monospacedDigit()
+                                    .lineLimit(1)
+                                    .frame(maxWidth: .infinity, minHeight: 56, maxHeight: 56)
+                            }
+                            .buttonStyle(.bordered)
+                            .accessibilityIdentifier("episode-\(index + 1)")
                         }
                     }.padding(.vertical, 20)
                 }
