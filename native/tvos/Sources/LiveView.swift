@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct LiveView: View {
+    var openSettings: () -> Void
+    var returnToBrowse: () -> Void
     @EnvironmentObject private var session: LunaSession
     @AppStorage("native.liveURL") private var address = ""
     @State private var channels: [Channel] = []
@@ -10,10 +12,19 @@ struct LiveView: View {
     private var groups: [String] { Array(Set(channels.map(\.group))).sorted() }
     var body: some View {
         Group {
-            if address.isEmpty { EmptyState(title: "添加直播频道", subtitle: "在设置中填写 M3U 订阅地址，即可在这里观看。", symbol: "tv") }
-            else if loading { ProgressView("正在加载频道…") }
+            if address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                status(title: "添加直播频道", subtitle: "在设置中填写 M3U 订阅地址，即可在这里观看。", symbol: "tv")
+            } else if loading {
+                VStack(spacing: 28) {
+                    ProgressView("正在加载频道…")
+                    Button("返回热门剧集", action: returnToBrowse)
+                        .accessibilityIdentifier("live-return-browse")
+                }.frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
             else if let error {
-                VStack { EmptyState(title: "无法加载频道", subtitle: error, symbol: "wifi.exclamationmark"); Button("重试") { Task { await load() } } }
+                status(title: "无法加载频道", subtitle: error, symbol: "wifi.exclamationmark", retry: true)
+            } else if channels.isEmpty {
+                status(title: "暂无直播频道", subtitle: "订阅中没有找到可播放频道。请检查订阅地址或更换 M3U 订阅。", symbol: "tv", retry: true)
             } else {
                 List {
                     ForEach(groups, id: \.self) { group in
@@ -26,14 +37,24 @@ struct LiveView: View {
                             }
                         }
                     }
-                    if channels.isEmpty { Text("订阅中没有找到可播放频道。") }
                 }
             }
         }.navigationTitle("直播").task(id: address) { await load() }
         .fullScreenCover(item: $playback) { NativePlayerView(state: $0) }
     }
+    private func status(title: String, subtitle: String, symbol: String, retry: Bool = false) -> some View {
+        VStack(spacing: 28) {
+            EmptyState(title: title, subtitle: subtitle, symbol: symbol)
+            // A text-only tvOS page cannot receive content focus. Keep genuine
+            // actions in every empty/error state so native sidebar navigation works.
+            if retry { Button("重新加载") { Task { await load() } }.accessibilityIdentifier("live-retry") }
+            Button("前往设置", action: openSettings).accessibilityIdentifier("live-open-settings")
+            Button("返回热门剧集", action: returnToBrowse).accessibilityIdentifier("live-return-browse")
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
     private func load() async {
-        guard !address.isEmpty else { channels = []; return }
+        let address = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !address.isEmpty else { channels = []; error = nil; loading = false; return }
         loading = true; error = nil
         do {
             guard let url = URL(string: address), ["http", "https"].contains(url.scheme?.lowercased() ?? "") else { throw NativeError(message: "订阅地址无效。") }

@@ -2,6 +2,17 @@ import SwiftUI
 
 @main struct OrionTVNativeApp: App {
     @StateObject private var session = LunaSession()
+    init() {
+        let defaults = UserDefaults.standard
+        if let url = Bundle.main.object(forInfoDictionaryKey: "OrionLiveURL") as? String, !url.isEmpty,
+           defaults.string(forKey: "native.provisionedLiveURL") != url {
+            if (defaults.string(forKey: "native.liveURL") ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                defaults.set(url, forKey: "native.liveURL")
+            }
+            // Apply each provisioned default once; users can later clear it.
+            defaults.set(url, forKey: "native.provisionedLiveURL")
+        }
+    }
     var body: some Scene {
         WindowGroup {
             Group {
@@ -37,7 +48,7 @@ private struct NativeTabs: View {
                 NavigationStack { LibraryView() }
             }
             Tab("直播", systemImage: "tv.inset.filled", value: "live") {
-                NavigationStack { LiveView() }
+                NavigationStack { LiveView(openSettings: { selected = "settings" }, returnToBrowse: { selected = "hot" }) }
             }
             Tab("设置", systemImage: "gearshape.fill", value: "settings") {
                 NavigationStack { SettingsView() }

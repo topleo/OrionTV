@@ -1,5 +1,31 @@
 import XCTest
 final class NavigationUITests: XCTestCase {
+    func testEmptyLiveCanReturnToSidebarAndSettings() throws {
+        for (url, title) in [("", "添加直播频道"), ("http://127.0.0.1:18087/empty.m3u", "暂无直播频道"), ("not-a-url", "无法加载频道")] {
+            let app=XCUIApplication(bundleIdentifier:"com.oriontv.layout-preview")
+            app.launchArguments = ["-native.liveURL", url]
+            app.launch()
+            let remote=XCUIRemote.shared
+            sleep(3)
+            for _ in 0..<12 { remote.press(.up) }
+            for _ in 0..<7 { remote.press(.down) }
+            remote.press(.select)
+            remote.press(.right)
+            let settings=app.buttons["live-open-settings"]
+            XCTAssertTrue(settings.waitForExistence(timeout:5))
+            XCTAssertTrue(app.staticTexts[title].exists)
+            remote.press(.menu)
+            sleep(1)
+            let actions=app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "live-")).allElementsBoundByIndex
+            XCTAssertFalse(actions.contains { $0.hasFocus }, "Back should move focus into the native sidebar")
+            remote.press(.right)
+            for _ in 0..<4 { if settings.hasFocus { break }; remote.press(.down) }
+            XCTAssertTrue(settings.hasFocus)
+            remote.press(.select)
+            XCTAssertTrue(app.textFields["M3U 订阅地址"].waitForExistence(timeout:5))
+            app.terminate()
+        }
+    }
     func testPartialRowAndSidebar() throws {
         let app=XCUIApplication(bundleIdentifier:"com.oriontv.layout-preview")
         app.launch()

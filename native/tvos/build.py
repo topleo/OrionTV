@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--output', type=pathlib.Path, default=root/'build')
 parser.add_argument('--bundle-id', default=os.environ.get('ORION_BUNDLE_IDENTIFIER', 'com.oriontv.native'))
 parser.add_argument('--server', default=os.environ.get('ORION_SERVER_URL', ''))
+parser.add_argument('--live-url', default=os.environ.get('ORION_LIVE_URL', ''), help='Provision an initial M3U subscription without replacing an existing subscription')
 parser.add_argument('--simulator', action='store_true', help='Build an arm64 Apple TV Simulator app instead of an IPA')
 parser.add_argument('--precompiled-assets', type=pathlib.Path)
 parser.add_argument('--disable-plugin-sandbox', action='store_true', help='For hosts where Apple compiler plugins cannot start a nested sandbox')
@@ -22,6 +23,7 @@ command += [str(p) for p in sorted((root/'Sources').glob('*.swift'))]
 subprocess.run(command, check=True)
 info = plistlib.loads((root/'Info.plist').read_bytes())
 info['CFBundleSupportedPlatforms'] = ['AppleTVSimulator' if args.simulator else 'AppleTVOS']
+info['OrionLiveURL'] = args.live_url
 info['CFBundleIdentifier'] = args.bundle_id; info['CFBundleExecutable'] = 'OrionTVNative'; info['OrionServerURL'] = args.server
 if args.precompiled_assets:
     if args.precompiled_assets.resolve() != (app/'Assets.car').resolve():

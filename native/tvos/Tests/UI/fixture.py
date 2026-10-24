@@ -8,7 +8,9 @@ class Handler(BaseHTTPRequestHandler):
  def log_message(self,*args): pass
  def do_GET(self):
   path=urlsplit(self.path);q=parse_qs(path.query)
-  if path.path.startswith('/poster/'):
+  if path.path=='/empty.m3u':
+   data=b'#EXTM3U\n';kind='application/vnd.apple.mpegurl'
+  elif path.path.startswith('/poster/'):
    name='images/icon.png' if path.path.endswith('square') else 'tv_icons/icon-1920x720.png'
    data=(base/name).read_bytes();kind='image/png'
   else:
