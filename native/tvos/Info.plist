@@ -23,9 +23,9 @@
 		<string>AppleTVOS</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>100</string>
+	<string>103</string>
 	<key>MinimumOSVersion</key>
-	<string>17.0</string>
+	<string>18.0</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -35,6 +35,8 @@
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>连接你选择的 LunaTV 服务器并播放局域网视频。</string>
+	<key>OrionLiveURL</key>
+	<string></string>
 	<key>OrionServerURL</key>
 	<string></string>
 	<key>UIApplicationSceneManifest</key>

@@ -3,7 +3,7 @@ require 'xcodeproj'
 require 'pathname'
 root = Pathname.new(__dir__)
 project = Xcodeproj::Project.new(root.join('OrionTVNative.xcodeproj'))
-target = project.new_target(:application, 'OrionTVNative', :tvos, '17.0')
+target = project.new_target(:application, 'OrionTVNative', :tvos, '18.0')
 sources = project.main_group.new_group('Sources', 'Sources')
 files = root.join('Sources').children.select { |p| p.extname == '.swift' }.sort.map { |p| sources.new_file(p.basename.to_s) }
 target.add_file_references(files)
@@ -17,7 +17,7 @@ target.build_configurations.each do |configuration|
     'INFOPLIST_FILE' => 'Info.plist',
     'GENERATE_INFOPLIST_FILE' => 'NO',
     'SWIFT_VERSION' => '5.0',
-    'TVOS_DEPLOYMENT_TARGET' => '17.0',
+    'TVOS_DEPLOYMENT_TARGET' => '18.0',
     'TARGETED_DEVICE_FAMILY' => '3',
     'CODE_SIGN_STYLE' => 'Automatic',
     'ASSETCATALOG_COMPILER_APPICON_NAME' => 'TVAppIcon',

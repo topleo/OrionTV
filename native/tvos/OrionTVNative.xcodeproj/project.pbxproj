@@ -187,7 +187,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 			};
 			name = Debug;
 		};
@@ -206,7 +206,7 @@
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
