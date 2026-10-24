@@ -33,7 +33,7 @@ swiftc Sources/Models.swift Tests/CoreTests.swift -o /tmp/orion-core-tests
 /tmp/orion-core-tests
 ```
 
-模型测试覆盖数字 ID、收藏/记录 key、集数转换、进度请求体、M3U 去重和相对地址。真机仍需验证首次登录、顶部导航、分类菜单、搜索、播放和返回；不能用编译通过代替遥控器检查。
+模型测试覆盖数字 ID、收藏/记录 key、集数转换、进度请求体、M3U 去重和相对地址。Apple TV 4K 真机已确认登录、顶部导航和播放正常。收藏同步、各种来源的字幕/音轨、M3U 频道及长时间连续播放仍需按实际内容验证；不能用编译通过代替遥控器检查。
 
 ## 与上游同步
 

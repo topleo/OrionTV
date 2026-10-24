@@ -1,3 +1,5 @@
+> Apple TV 用户：现已提供独立的 [SwiftUI / AVKit 原生客户端](native/tvos/README.md)。
+
 # OrionTV 📺
 
 一个基于 React Native TVOS 和 Expo 构建的播放器，旨在提供流畅的视频观看体验。
