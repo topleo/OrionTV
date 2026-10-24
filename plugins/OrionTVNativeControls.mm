@@ -3,8 +3,28 @@
 #import <React/RCTTVView.h>
 #import <React/UIView+React.h>
 
+// A prop update reaches the actual UIKit view without inherited command metadata.
+@interface OrionTVFocusView : RCTTVView
+@property(nonatomic) NSInteger focusRequest;
+- (UIView *)focusDestination;
+@end
+@implementation OrionTVFocusView
+- (UIView *)focusDestination { return self; }
+- (void)setFocusRequest:(NSInteger)value {
+  _focusRequest = value;
+  if (value <= 0) return;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (!self.window) return;
+    [self.window layoutIfNeeded];
+    UIFocusSystem *system = [UIFocusSystem focusSystemForEnvironment:self];
+    [system requestFocusUpdateToEnvironment:[self focusDestination]];
+    [system updateFocusIfNeeded];
+  });
+}
+@end
+
 // UIKit owns the focus appearance, accessibility and selection of the tab items.
-@interface OrionTVTabBarView : RCTTVView <UITabBarDelegate>
+@interface OrionTVTabBarView : OrionTVFocusView <UITabBarDelegate>
 @property(nonatomic, strong) UITabBar *bar;
 @property(nonatomic) NSInteger selectedIndex;
 @property(nonatomic, copy) RCTDirectEventBlock onTabSelect;
@@ -32,6 +52,7 @@
 }
 - (void)layoutSubviews { [super layoutSubviews]; self.bar.frame = self.bounds; }
 - (NSArray<id<UIFocusEnvironment>> *)preferredFocusEnvironments { return @[self.bar]; }
+- (UIView *)focusDestination { return self.bar; }
 - (void)setSelectedIndex:(NSInteger)index {
   _selectedIndex = MAX(0, MIN(index, (NSInteger)self.bar.items.count - 1));
   self.bar.selectedItem = self.bar.items[_selectedIndex];
@@ -49,13 +70,14 @@
 @implementation OrionTVTabBarManager
 RCT_EXPORT_MODULE(OrionTVTabBar)
 - (UIView *)view { return [OrionTVTabBarView new]; }
+RCT_EXPORT_VIEW_PROPERTY(focusRequest, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(selectedIndex, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(onTabSelect, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onControlFocus, RCTDirectEventBlock)
 @end
 
 // A single-level system menu replaces persistent rows of category/filter tabs.
-@interface OrionTVMenuView : RCTTVView
+@interface OrionTVMenuView : OrionTVFocusView
 @property(nonatomic, strong) UIButton *button;
 @property(nonatomic, copy) NSString *title;
 @property(nonatomic, copy) NSArray<NSString *> *options;
@@ -76,6 +98,7 @@ RCT_EXPORT_VIEW_PROPERTY(onControlFocus, RCTDirectEventBlock)
 }
 - (void)layoutSubviews { [super layoutSubviews]; self.button.frame = self.bounds; }
 - (NSArray<id<UIFocusEnvironment>> *)preferredFocusEnvironments { return @[self.button]; }
+- (UIView *)focusDestination { return self.button; }
 - (void)setTitle:(NSString *)title { _title = [title copy]; [self rebuildMenu]; }
 - (void)setOptions:(NSArray<NSString *> *)options { _options = [options copy]; [self rebuildMenu]; }
 - (void)setSelectedIndex:(NSInteger)index { _selectedIndex = index; [self rebuildMenu]; }
@@ -118,6 +141,7 @@ RCT_EXPORT_MODULE(OrionTVMenu)
 - (UIView *)view { return [OrionTVMenuView new]; }
 RCT_EXPORT_VIEW_PROPERTY(title, NSString)
 RCT_EXPORT_VIEW_PROPERTY(options, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(focusRequest, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(selectedIndex, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(onSelect, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onControlFocus, RCTDirectEventBlock)

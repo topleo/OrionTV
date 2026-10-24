@@ -1,5 +1,5 @@
 import React from 'react';
-import { requireNativeComponent, View, ViewProps, NativeSyntheticEvent, UIManager, findNodeHandle } from 'react-native';
+import { requireNativeComponent, View, ViewProps, NativeSyntheticEvent } from 'react-native';
 import { isAppleTV } from '@/constants/TVTheme';
 
 type SelectionEvent = NativeSyntheticEvent<{ index: number }>;
@@ -17,15 +17,16 @@ type NativeMenuProps = ViewProps & {
 };
 // Unlike RN's View wrapper, raw native component refs do not add requestTVFocus.
 // Keep the real host ref (for findNodeHandle) and expose the same imperative API.
+let focusSequence = 0;
 function nativeControl<Props extends ViewProps>(managerName: string) {
   const Control = requireNativeComponent<Props>(managerName);
   return React.forwardRef<View, Props>((props, forwardedRef) => {
     const setRef = React.useCallback((view: View | null) => {
       if (view) {
         view.requestTVFocus = () => {
-          const tag = findNodeHandle(view);
-          const command = UIManager.getViewManagerConfig(managerName)?.Commands?.requestTVFocus;
-          if (tag != null && command != null) UIManager.dispatchViewManagerCommand(tag, command, []);
+          // Prop updates reach our UIKit focus system directly, including when
+          // a custom manager has no inherited command metadata.
+          view.setNativeProps({ focusRequest: ++focusSequence });
         };
       }
       if (typeof forwardedRef === 'function') forwardedRef(view);

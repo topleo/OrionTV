@@ -34,7 +34,7 @@ export function TVFocusScope({ children }: { children: React.ReactNode }) {
   const markNavigationFocus = useCallback(() => { region.current = 'navigation'; }, []);
   const focusNavigation = useCallback(() => {
     if (!navigation.current) return false;
-    region.current = 'navigation';
+    // Mark navigation only after the control acknowledges focus via onFocus.
     clearTimeout(pendingFocus.current);
     // Apply after UIKit handles the directional event, so ScrollView cannot retain it.
     pendingFocus.current = setTimeout(() => navigation.current?.requestTVFocus(), 20);

@@ -12,7 +12,7 @@ const mocks = id => {
     requireNativeComponent: name => name,
     findNodeHandle: view => view._nativeTag,
     UIManager: {
-      getViewManagerConfig: () => ({ Commands: { requestTVFocus: 0 } }),
+      getViewManagerConfig: () => { throw Error('Focus must not depend on command metadata'); },
       dispatchViewManagerCommand: (tag, command, args) => sent.push({ tag, command, args }),
     },
   };
@@ -23,12 +23,12 @@ new Function('require', 'module', 'exports', compiled)(mocks, mod, mod.exports);
 for (const [index, Control] of [mod.exports.NativeTVTabBar, mod.exports.NativeTVMenu].entries()) {
   let handle, tree;
   act(() => { tree = renderer.create(React.createElement(Control, { ref: view => { handle = view; } }), {
-    createNodeMock: () => ({ _nativeTag: 101 + index }),
+    createNodeMock: () => ({ _nativeTag: 101 + index, setNativeProps: props => sent.push({ tag: 101 + index, props }) }),
   }); });
   assert.equal(typeof handle.requestTVFocus, 'function');
   assert.doesNotThrow(() => handle.requestTVFocus());
-  assert.deepEqual(sent[index], { tag: 101 + index, command: 0, args: [] });
+  assert.deepEqual(sent[index], { tag: 101 + index, props: { focusRequest: index + 1 } });
   act(() => tree.unmount());
   assert.equal(handle, null, 'unmounted controls must clear their focus refs');
 }
-console.log('Raw UIKit refs support focus commands, including command index zero, and clear on unmount');
+console.log('Raw UIKit refs support focus commands, without relying on optional command metadata, and clear on unmount');

@@ -3,7 +3,7 @@ const fs = require('fs'), path = require('path'), assert = require('assert');
 const ts = require('typescript'), React = require('react'), renderer = require('react-test-renderer');
 const { act } = renderer;
 let eventHandler, backHandler, controls, focused = true, focusRequests = 0, timers = [];
-const nativeNavigation = { requestTVFocus() { focusRequests++; } };
+const nativeNavigation = { requestTVFocus() { focusRequests++; controls.markNavigationFocus(); } };
 const source = fs.readFileSync(path.join(__dirname, '../components/TVFocusScope.tsx'), 'utf8');
 const output = ts.transpileModule(source, { compilerOptions: {
   jsx: ts.JsxEmit.React, module: ts.ModuleKind.CommonJS, esModuleInterop: true,
