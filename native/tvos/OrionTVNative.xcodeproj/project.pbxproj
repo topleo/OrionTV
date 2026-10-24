@@ -1,0 +1,353 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		161DC832EF601EE346EDCE4E /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E07EDE53B40BBD82B70F0CC /* DetailView.swift */; };
+		43FC55B49F96CAA450484B7C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17EC71E4F8A19BD97699C021 /* Assets.xcassets */; };
+		686F0402049D873AEEB21FBF /* BrowseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5E5CF129A69D151487EA63 /* BrowseViews.swift */; };
+		8288D40A6CAA2F86F11336FA /* NativePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E980B60D3281EE71AF6C283 /* NativePlayer.swift */; };
+		97187AC338C0499D5B48C9ED /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E9CFBFAC39C8C50D2941C4 /* Models.swift */; };
+		9965A3EAC24399696CC72F50 /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A01BC040FFA1CE40A261CD /* LiveView.swift */; };
+		ABFEB4B463EAE968258090D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 812016675349F41598709E0A /* Foundation.framework */; };
+		BFA2FF7DB2DE75805631C59B /* OrionTVApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D65DEA73E9AB82662E09E3 /* OrionTVApp.swift */; };
+		C8E23A86162F1A6571E0BBB1 /* LunaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4F7A41E3F96F8FFAC01AFE /* LunaSession.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		06A01BC040FFA1CE40A261CD /* LiveView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
+		0E07EDE53B40BBD82B70F0CC /* DetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		17EC71E4F8A19BD97699C021 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3F4F7A41E3F96F8FFAC01AFE /* LunaSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LunaSession.swift; sourceTree = "<group>"; };
+		5E980B60D3281EE71AF6C283 /* NativePlayer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NativePlayer.swift; sourceTree = "<group>"; };
+		6D5E5CF129A69D151487EA63 /* BrowseViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BrowseViews.swift; sourceTree = "<group>"; };
+		812016675349F41598709E0A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		84D65DEA73E9AB82662E09E3 /* OrionTVApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OrionTVApp.swift; sourceTree = "<group>"; };
+		90D4514245C8DB1130BB408D /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E5E9CFBFAC39C8C50D2941C4 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		F3FBD20F2699A5A5F2DDE9CA /* OrionTVNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrionTVNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		55336E4F4D9627AB4F941A7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ABFEB4B463EAE968258090D5 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3756A1F19CC56456BF60030B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F9FA031A2CAF769526868B17 /* tvOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AB6DA527F0E38AF892970967 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6D5E5CF129A69D151487EA63 /* BrowseViews.swift */,
+				0E07EDE53B40BBD82B70F0CC /* DetailView.swift */,
+				06A01BC040FFA1CE40A261CD /* LiveView.swift */,
+				3F4F7A41E3F96F8FFAC01AFE /* LunaSession.swift */,
+				E5E9CFBFAC39C8C50D2941C4 /* Models.swift */,
+				5E980B60D3281EE71AF6C283 /* NativePlayer.swift */,
+				84D65DEA73E9AB82662E09E3 /* OrionTVApp.swift */,
+			);
+			name = Sources;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		CD3EAFCE43A03EF61F404124 = {
+			isa = PBXGroup;
+			children = (
+				F2D93F0CCA48655A4CB5DE1D /* Products */,
+				3756A1F19CC56456BF60030B /* Frameworks */,
+				AB6DA527F0E38AF892970967 /* Sources */,
+				17EC71E4F8A19BD97699C021 /* Assets.xcassets */,
+				90D4514245C8DB1130BB408D /* Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+		F2D93F0CCA48655A4CB5DE1D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F3FBD20F2699A5A5F2DDE9CA /* OrionTVNative.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F9FA031A2CAF769526868B17 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				812016675349F41598709E0A /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F5A6DB5F75CBE0255938D17F /* OrionTVNative */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A5B73374533D07AD71C0E75 /* Build configuration list for PBXNativeTarget "OrionTVNative" */;
+			buildPhases = (
+				773637E758292A2917CDBCD4 /* Sources */,
+				55336E4F4D9627AB4F941A7C /* Frameworks */,
+				353B56A4137C17B6C061B46A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OrionTVNative;
+			productName = OrionTVNative;
+			productReference = F3FBD20F2699A5A5F2DDE9CA /* OrionTVNative.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3FDD67146CE715C4F27E75BA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = 4FCB6069B40304E74FC06081 /* Build configuration list for PBXProject "OrionTVNative" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CD3EAFCE43A03EF61F404124;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 100;
+			productRefGroup = F2D93F0CCA48655A4CB5DE1D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F5A6DB5F75CBE0255938D17F /* OrionTVNative */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		353B56A4137C17B6C061B46A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43FC55B49F96CAA450484B7C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		773637E758292A2917CDBCD4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				686F0402049D873AEEB21FBF /* BrowseViews.swift in Sources */,
+				161DC832EF601EE346EDCE4E /* DetailView.swift in Sources */,
+				9965A3EAC24399696CC72F50 /* LiveView.swift in Sources */,
+				C8E23A86162F1A6571E0BBB1 /* LunaSession.swift in Sources */,
+				97187AC338C0499D5B48C9ED /* Models.swift in Sources */,
+				8288D40A6CAA2F86F11336FA /* NativePlayer.swift in Sources */,
+				BFA2FF7DB2DE75805631C59B /* OrionTVApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		03850E6FF1AB4C2BB42D25F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = TVAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /usr/lib/swift";
+				PRODUCT_BUNDLE_IDENTIFIER = com.oriontv.native;
+				PRODUCT_NAME = OrionTVNative;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		56B1E8FD84ED37B80990ADF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = TVAppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks /usr/lib/swift";
+				PRODUCT_BUNDLE_IDENTIFIER = com.oriontv.native;
+				PRODUCT_NAME = OrionTVNative;
+				SDKROOT = appletvos;
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		68BF10C2B79262EEF7C97286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F20DE332F8DC79B642AE1D4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A5B73374533D07AD71C0E75 /* Build configuration list for PBXNativeTarget "OrionTVNative" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				56B1E8FD84ED37B80990ADF3 /* Release */,
+				03850E6FF1AB4C2BB42D25F8 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4FCB6069B40304E74FC06081 /* Build configuration list for PBXProject "OrionTVNative" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68BF10C2B79262EEF7C97286 /* Debug */,
+				F20DE332F8DC79B642AE1D4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3FDD67146CE715C4F27E75BA /* Project object */;
+}
