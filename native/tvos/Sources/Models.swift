@@ -56,6 +56,15 @@ struct BrowseCategory: Identifiable {
     let title: String
     let type: String
     let tags: [String]
+    var symbol: String {
+        switch id {
+        case "hot": return "flame.fill"
+        case "movie": return "film.fill"
+        case "series": return "tv"
+        case "variety": return "sparkles.tv"
+        default: return "star.fill"
+        }
+    }
     static let all: [BrowseCategory] = [
         .init(id: "hot", title: "热门剧集", type: "tv", tags: ["热门"]),
         .init(id: "movie", title: "电影", type: "movie", tags: ["热门", "最新", "经典", "豆瓣高分", "华语", "欧美", "韩国", "日本", "动作", "喜剧", "爱情", "科幻", "悬疑", "恐怖"]),
@@ -88,5 +97,42 @@ struct Channel: Identifiable, Hashable {
             }
         }
         return result
+    }
+}
+
+// Uniform metrics are shared by every poster and every focus row.
+struct PosterGridLayout {
+    static let horizontalGap = 44.0
+    static let verticalGap = 42.0
+    let columns: Int
+    let cardWidth: Double
+    let itemCount: Int
+    init(width: Double, itemCount: Int) {
+        let width = max(1, width)
+        columns = max(1, min(6, Int((width + Self.horizontalGap) / (210 + Self.horizontalGap))))
+        cardWidth = floor((width - Double(columns - 1) * Self.horizontalGap) / Double(columns))
+        self.itemCount = max(0, itemCount)
+    }
+    var posterHeight: Double { floor(cardWidth * 1.5) }
+    var cellHeight: Double { posterHeight + 24 + 62 + 28 }
+    var rowCount: Int { (itemCount + columns - 1) / columns }
+    func indices(in row: Int) -> Range<Int> {
+        let start = min(itemCount, max(0, row) * columns)
+        return start..<min(start + columns, itemCount)
+    }
+}
+
+struct MediaPage {
+    static let pageSize = 20
+    private(set) var items: [Media] = []
+    private(set) var offset = 0
+    private(set) var hasMore = true
+    mutating func append(_ page: [Media]) {
+        var seen = Set(items.map(\.id))
+        let fresh = page.filter { seen.insert($0.id).inserted }
+        items += fresh
+        offset += page.count
+        // A repeated page must not turn automatic pagination into a request loop.
+        hasMore = page.count >= Self.pageSize && !fresh.isEmpty
     }
 }

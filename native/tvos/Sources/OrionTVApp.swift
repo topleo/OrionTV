@@ -17,19 +17,52 @@ import SwiftUI
 }
 
 private struct NativeTabs: View {
-    var body: some View {
-        TabView {
-            NavigationStack { BrowseView() }
-                .tabItem { Label("现在观看", systemImage: "play.rectangle.fill") }
-            NavigationStack { LibraryView() }
-                .tabItem { Label("资料库", systemImage: "books.vertical.fill") }
-            NavigationStack { SearchView() }
-                .tabItem { Label("搜索", systemImage: "magnifyingglass") }
-            NavigationStack { LiveView() }
-                .tabItem { Label("直播", systemImage: "tv") }
-            NavigationStack { SettingsView() }
-                .tabItem { Label("设置", systemImage: "gearshape.fill") }
-        }
+    @State private var selected = "hot"
+    @State private var tags: [String: String] = [:]
+    private var category: BrowseCategory? { BrowseCategory.all.first { $0.id == selected } }
+    private func tag(for category: BrowseCategory) -> Binding<String> {
+        Binding(get: { tags[category.id] ?? category.tags[0] }, set: { tags[category.id] = $0 })
+    }
+    private var tabs: some View {
+        TabView(selection: $selected) {
+            Tab("搜索", systemImage: "magnifyingglass", value: "search", role: .search) {
+                NavigationStack { SearchView() }
+            }
+            ForEach(BrowseCategory.all) { category in
+                Tab(category.title, systemImage: category.symbol, value: category.id) {
+                    NavigationStack { BrowseView(category: category, tag: tag(for: category)) }
+                }
+            }
+            Tab("资料库", systemImage: "books.vertical.fill", value: "library") {
+                NavigationStack { LibraryView() }
+            }
+            Tab("直播", systemImage: "tv.inset.filled", value: "live") {
+                NavigationStack { LiveView() }
+            }
+            Tab("设置", systemImage: "gearshape.fill", value: "settings") {
+                NavigationStack { SettingsView() }
+            }
+        }.tabViewStyle(.sidebarAdaptable)
+    }
+    @ViewBuilder var body: some View {
+        if #available(tvOS 27.0, *) {
+            tabs
+                .tabViewSidebarHeader {
+                    Label("OrionTV", systemImage: "play.rectangle.fill")
+                        .font(.title2.weight(.semibold)).padding(.vertical, 16)
+                }
+                .tabViewSidebarFooter {
+                    if let category, category.tags.count > 1 {
+                        Menu {
+                            Picker("内容筛选", selection: tag(for: category)) {
+                                ForEach(category.tags, id: \.self) { Text($0).tag($0) }
+                            }
+                        } label: {
+                            Label(tags[category.id] ?? category.tags[0], systemImage: "line.3.horizontal.decrease")
+                        }.padding(.vertical, 12)
+                    }
+                }
+        } else { tabs }
     }
 }
 
@@ -77,27 +110,78 @@ struct EmptyState: View {
     }
 }
 
+private struct GridWidthPreference: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
+}
+
 struct MediaGrid: View {
     let items: [Media]
+    var onApproachEnd: (() -> Void)? = nil
+    @State private var availableWidth: CGFloat = 0
+    var body: some View {
+        let layout = PosterGridLayout(width: Double(availableWidth), itemCount: items.count)
+        LazyVStack(alignment: .leading, spacing: PosterGridLayout.verticalGap) {
+            if availableWidth > 0 {
+                ForEach(0..<layout.rowCount, id: \.self) { row in
+                    HStack(alignment: .top, spacing: PosterGridLayout.horizontalGap) {
+                        ForEach(Array(layout.indices(in: row)), id: \.self) { index in
+                            PosterCard(item: items[index], layout: layout)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: layout.cellHeight, alignment: .leading)
+                    // The entire row (including an incomplete row's empty columns)
+                    // guides directional movement to its nearest actual poster.
+                    .focusSection()
+                    .onAppear { if row == layout.rowCount - 1 { onApproachEnd?() } }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 28)
+        .background {
+            GeometryReader { proxy in Color.clear.preference(key: GridWidthPreference.self, value: proxy.size.width) }
+        }
+        .onPreferenceChange(GridWidthPreference.self) { width in
+            if abs(width - availableWidth) > 1 { availableWidth = width }
+        }
+    }
+}
+
+private struct PosterCard: View {
+    let item: Media
+    let layout: PosterGridLayout
     @EnvironmentObject private var session: LunaSession
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 200, maximum: 240), spacing: 36)], alignment: .leading, spacing: 44) {
-            ForEach(items) { item in
-                NavigationLink(value: item) {
-                    VStack(alignment: .leading, spacing: 14) {
-                        AsyncImage(url: session.images(item.poster)) { image in image.resizable().scaledToFill() }
-                        placeholder: { Rectangle().fill(.quaternary).overlay { Image(systemName: "film").font(.largeTitle).foregroundStyle(.secondary) } }
-                        .frame(height: 300).frame(maxWidth: .infinity).clipped().clipShape(RoundedRectangle(cornerRadius: 12))
-                        Text(item.title).font(.headline).lineLimit(2).frame(height: 64, alignment: .topLeading)
-                        Text([item.year, item.sourceName, item.rating.isEmpty ? "" : "★ " + item.rating].filter { !$0.isEmpty }.joined(separator: " · "))
-                            .font(.caption).foregroundStyle(.secondary).lineLimit(1)
-                        if item.duration > 0 && item.position > 0 {
-                            ProgressView(value: min(1, item.position / item.duration)).tint(.white)
-                        }
-                    }.padding(12)
-                }.buttonStyle(.card)
-                .accessibilityLabel(item.title + (item.position > 0 ? "，继续观看" : ""))
+        VStack(alignment: .leading, spacing: 0) {
+            NavigationLink(value: item) {
+                AsyncImage(url: session.images(item.poster)) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    Rectangle().fill(Color.white.opacity(0.07))
+                        .overlay { Image(systemName: "film").font(.largeTitle).foregroundStyle(.secondary) }
+                }
+                .frame(width: layout.cardWidth, height: layout.posterHeight)
+                .clipped().clipShape(RoundedRectangle(cornerRadius: 14))
+                .overlay(alignment: .bottom) {
+                    if item.duration > 0 && item.position > 0 {
+                        ProgressView(value: min(1, item.position / item.duration))
+                            .tint(.white).padding(12)
+                    }
+                }
             }
-        }.padding(.vertical, 24)
+            .buttonStyle(.card)
+            .frame(width: layout.cardWidth, height: layout.posterHeight)
+            .padding(.bottom, 24)
+            .accessibilityLabel(item.title + (item.position > 0 ? "，继续观看" : ""))
+            .accessibilityIdentifier("poster-" + item.id)
+            Text(item.title).font(.system(size: 24, weight: .medium))
+                .lineLimit(2).frame(width: layout.cardWidth, height: 62, alignment: .topLeading)
+            Text([item.year, item.sourceName, item.rating.isEmpty ? "" : "★ " + item.rating]
+                .filter { !$0.isEmpty }.joined(separator: " · "))
+                .font(.system(size: 20)).foregroundStyle(.secondary)
+                .lineLimit(1).frame(width: layout.cardWidth, height: 28, alignment: .leading)
+        }.frame(width: layout.cardWidth, height: layout.cellHeight, alignment: .topLeading)
     }
 }

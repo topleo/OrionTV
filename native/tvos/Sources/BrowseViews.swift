@@ -1,50 +1,65 @@
 import SwiftUI
 
 struct BrowseView: View {
+    let category: BrowseCategory
+    @Binding var tag: String
     @EnvironmentObject private var session: LunaSession
-    @State private var categoryID = "hot"
-    @State private var tag = "热门"
-    @State private var items: [Media] = []
+    @State private var page = MediaPage()
     @State private var loading = false
     @State private var error: String?
-    @State private var hasMore = true
-    @State private var offset = 0
-    private var category: BrowseCategory { BrowseCategory.all.first { $0.id == categoryID } ?? BrowseCategory.all[0] }
-    private var filterID: String { categoryID + ":" + tag }
+    @State private var generation = UUID()
+    private var filterID: String { category.id + ":" + tag }
     var body: some View {
-        VStack(spacing: 16) {
-            HStack(spacing: 32) {
-                Text("现在观看").font(.largeTitle.bold())
-                Spacer()
-                Picker("分类", selection: $categoryID) { ForEach(BrowseCategory.all) { Text($0.title).tag($0.id) } }.pickerStyle(.menu)
-                if category.tags.count > 1 {
-                    Picker("筛选", selection: $tag) { ForEach(category.tags, id: \.self) { Text($0).tag($0) } }.pickerStyle(.menu)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(category.title).font(.system(size: 48, weight: .bold))
+                    Text(category.tags.count > 1 ? tag : "精选内容，发现下一部想看的影片。")
+                        .font(.system(size: 24)).foregroundStyle(.secondary)
+                    if #unavailable(tvOS 27.0) {
+                        if category.tags.count > 1 {
+                            Picker("筛选", selection: $tag) {
+                                ForEach(category.tags, id: \.self) { Text($0).tag($0) }
+                            }.pickerStyle(.menu)
+                        }
+                    }
+                }.padding(.top, 30).padding(.bottom, 8)
+                MediaGrid(items: page.items) {
+                    guard !loading && page.hasMore && error == nil else { return }
+                    Task { await load(reset: false) }
                 }
-            }.padding(.top, 24)
-            ScrollView {
-                MediaGrid(items: items)
-                if loading { ProgressView("正在加载…").padding(32) }
+                if loading { HStack { Spacer(); ProgressView("正在加载…"); Spacer() }.padding(32) }
                 if let error {
-                    EmptyState(title: "暂时无法加载", subtitle: error, symbol: "wifi.exclamationmark")
-                    Button("重试") { Task { await load(reset: items.isEmpty) } }
-                } else if items.isEmpty && !loading { EmptyState(title: "没有找到影片", subtitle: "试试其他分类，或前往搜索。") }
-                if !items.isEmpty && hasMore && !loading { Button("加载更多") { Task { await load(reset: false) } }.padding(30) }
-            }
-        }.padding(.horizontal, 64)
-        .onChange(of: categoryID) { _, _ in tag = category.tags.first ?? "热门" }
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text(error).foregroundStyle(.secondary)
+                        Button("重试加载") { Task { await load(reset: page.items.isEmpty) } }
+                    }.padding(.vertical, 24)
+                } else if page.items.isEmpty && !loading {
+                    EmptyState(title: "没有找到影片", subtitle: "试试侧栏中的其他分类，或前往搜索。")
+                }
+            }.padding(.horizontal, 64).padding(.bottom, 44)
+        }
+        .background {
+            LinearGradient(colors: [Color(red: 0.035, green: 0.045, blue: 0.065), .black], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .ignoresSafeArea()
+        }
+        .toolbar(.hidden, for: .navigationBar)
         .task(id: filterID) { await load(reset: true) }
         .navigationDestination(for: Media.self) { DetailView(original: $0) }
     }
     private func load(reset: Bool) async {
-        if reset { items = []; hasMore = true; offset = 0 }; loading = true; error = nil
-        let key = filterID
+        if reset { generation = UUID(); page = MediaPage(); loading = false }
+        guard !loading && page.hasMore else { return }
+        loading = true; error = nil
+        let token = generation
         do {
-            let result = try await session.discover(category: category, tag: category.tags.contains(tag) ? tag : category.tags[0], start: offset)
-            try Task.checkCancellation(); guard filterID == key else { return }
-            var seen = Set(items.map(\.id)); items += result.filter { seen.insert($0.id).inserted }; offset += result.count; hasMore = result.count >= 20
-        } catch is CancellationError { return }
-        catch { if !Task.isCancelled { self.error = error.localizedDescription } }
-        if filterID == key { loading = false }
+            let result = try await session.discover(category: category, tag: tag, start: page.offset)
+            try Task.checkCancellation(); guard generation == token else { return }
+            page.append(result)
+        } catch {
+            if generation == token && !Task.isCancelled { self.error = error.localizedDescription }
+        }
+        if generation == token { loading = false }
     }
 }
 
@@ -132,7 +147,7 @@ struct SettingsView: View {
             Section("账户") { Button("退出登录", role: .destructive) { confirmLogout = true } }
             Section("关于") {
                 LabeledContent("客户端", value: "OrionTV 原生版")
-                LabeledContent("版本", value: "1.3.14 · Native 1")
+                LabeledContent("版本", value: "1.3.14 · Native 2")
                 Text("SwiftUI · AVKit").foregroundStyle(.secondary)
             }
             if let error { Text(error).foregroundStyle(.orange) }

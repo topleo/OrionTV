@@ -2,3 +2,6 @@ build/
 .local.env
 *.xcuserstate
 xcuserdata/
+
+__pycache__/
+*.pyc
