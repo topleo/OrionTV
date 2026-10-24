@@ -55,3 +55,5 @@ tvOS 的主导航使用 UIKit `UITabBar`，保留现在观看、资料库、搜�
 从第一排海报向上先回到分类菜单；没有筛选区的页面回主导航。返回键从内容区回到主导航，导航本身的返回事件继续交给路由。设置页导航固定在滚动区外。原生模块源码通过 Expo 插件在每次 prebuild 更新，避免生成目录中的修改丢失。
 
 依据：[Apple Tab bars（tvOS）](https://developer.apple.com/design/human-interface-guidelines/tab-bars)、[Designing for tvOS](https://developer.apple.com/design/human-interface-guidelines/designing-for-tvos) 和 [Pop-up buttons](https://developer.apple.com/design/human-interface-guidelines/pop-up-buttons)。原生化主要解决三排横向导航职责重叠，以及手绘控件焦点状态与系统不一致的问题。
+
+自定义 UIKit 控件通过 ViewManager 命令暴露 `requestTVFocus`，保留真实宿主引用以供 `findNodeHandle` 使用。原生控件的原始引用不包含 RN View 包装层增加的该方法；直接调用会导致 Release 版致命 JavaScript 异常。`node scripts/check-native-tv-ref.cjs` 使用不含该方法的原始宿主对象验证命令转发与卸载清理。
